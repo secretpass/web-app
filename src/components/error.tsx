@@ -1,0 +1,80 @@
+import { toast } from "@heroui/react";
+import { Activity, useCallback, useState } from "react";
+import { useAnalytics } from "@/features/analytics/provider";
+import { Alert } from "./alert";
+
+export type ErrorValue = { title: string; content: string };
+
+export type UnsafeFunction<T> = () => Promise<T>;
+export type UnsafeEvaluationResult<T> =
+  | { ok: true; result: T }
+  | { ok: false; error: unknown };
+
+interface CatchOptions {
+  capture?: string;
+  toast?: boolean;
+}
+
+export function useError() {
+  const [value, setValue] = useState<ErrorValue | null>(null);
+  const [is_pending, setIsPending] = useState<boolean>(false);
+  const analytics = useAnalytics();
+  const catch_error = useCallback(
+    async <T,>(
+      title: string,
+      unsafe: UnsafeFunction<T>,
+      options?: CatchOptions,
+    ): Promise<UnsafeEvaluationResult<T>> => {
+      setIsPending(true);
+      try {
+        const result = await unsafe();
+        setValue(null);
+        if (options?.capture) {
+          analytics?.capture(options.capture, { success: true });
+        }
+
+        return {
+          ok: true,
+          result,
+        };
+      } catch (error) {
+        setValue({ title, content: String(error) });
+        if (options?.capture) {
+          analytics?.capture(options.capture, { success: true });
+          analytics?.captureException(error, { source: options.capture });
+        }
+
+        if (options?.toast) {
+          toast(title, {
+            variant: "danger",
+            description: String(error),
+          });
+        }
+
+        return {
+          ok: false,
+          error,
+        };
+      } finally {
+        setIsPending(false);
+      }
+    },
+    [analytics],
+  );
+
+  return {
+    value,
+    is_pending,
+    catch: catch_error,
+  };
+}
+
+export function ErrorDisplay({ value }: { value: ErrorValue | null }) {
+  return (
+    <Activity mode={value ? "visible" : "hidden"}>
+      <Alert title={value?.title} className="max-w-full" status="danger">
+        {value?.content}
+      </Alert>
+    </Activity>
+  );
+}
