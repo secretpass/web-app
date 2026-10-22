@@ -23,8 +23,7 @@ import {
   Select,
   type SelectItem,
 } from "@/components/select";
-import type { SecretpassUser, UserLevel } from "@/core/web";
-import { useSecretManager } from "@/manager/provider";
+import type { SecretpassUser, UserLevel } from "@/core";
 
 function UserIcon({
   level,
@@ -54,7 +53,6 @@ const UserLevelItems: SelectItem[] = [
 ];
 
 export function ViewUser({ user }: { user: SecretpassUser }) {
-  const { user: current_user } = useSecretManager();
   const [edit, setEdit] = useState(false);
   return (
     <div
@@ -63,12 +61,12 @@ export function ViewUser({ user }: { user: SecretpassUser }) {
       )}
     >
       <div className={clsx("flex items-center gap-4")}>
-        <UserIcon level={user.level} className="size-8 text-muted" />
+        {/* <UserIcon level={user.level} className="size-8 text-muted" /> */}
 
         <div className="grow flex flex-col gap-1">
           <div className="flex items-center gap-4 mb-2">
             <span className="grow text-base">{user.name}</span>
-            {user.level === "Admin" && !edit && (
+            {/* {user.level === "Admin" && !edit && (
               <Chip color="accent">
                 <IconShield className="size-4" /> {user.level}
               </Chip>
@@ -81,7 +79,7 @@ export function ViewUser({ user }: { user: SecretpassUser }) {
                   </Chip>
                 ))}
               </div>
-            )}
+            )} */}
             {edit && (
               <Button
                 isIconOnly
@@ -92,26 +90,24 @@ export function ViewUser({ user }: { user: SecretpassUser }) {
                 <IconTrash />
               </Button>
             )}
-            {current_user.level === "Admin" && (
-              <Button
-                size="sm"
-                isIconOnly
-                variant="ghost"
-                onClick={() => setEdit(!edit)}
-                className={clsx(
-                  "text-muted",
-                  edit && "hover:text-warning",
-                  !edit && "hover:text-foreground",
-                )}
-              >
-                {edit && <IconX />}
-                {!edit && <IconEdit />}
-              </Button>
-            )}
+            <Button
+              size="sm"
+              isIconOnly
+              variant="ghost"
+              onClick={() => setEdit(!edit)}
+              className={clsx(
+                "text-muted",
+                edit && "hover:text-warning",
+                !edit && "hover:text-foreground",
+              )}
+            >
+              {edit && <IconX />}
+              {!edit && <IconEdit />}
+            </Button>
           </div>
           {!edit && (
             <div className="flex justify-between">
-              <Description>{user.username ?? "bot"}</Description>
+              <Description>{"bot"}</Description>
               <Description>{user.id}</Description>
             </div>
           )}
@@ -124,35 +120,25 @@ export function ViewUser({ user }: { user: SecretpassUser }) {
             <Label>Id</Label>
             <Input disabled value={user.id} />
           </TextField>
+          <TextField isReadOnly>
+            <Label>Username</Label>
 
-          {user.level !== "Machine" && (
-            <TextField isReadOnly>
-              <Label>Username</Label>
-              <Input disabled value={user.username} />
-              <Description>
-                The username is tied to the user's encrypted secrets and cannot
-                be changed.
-              </Description>
-            </TextField>
-          )}
+            <Description>
+              The username is tied to the user's encrypted secrets and cannot be
+              changed.
+            </Description>
+          </TextField>
 
           <TextField>
             <Label>Name</Label>
             <Input value={user.name} />
           </TextField>
 
-          {user.level !== "Machine" && (
-            <Select<string>
-              label="Access Level"
-              value={user.level}
-              items={UserLevelItems}
-            />
-          )}
+          <Select<string> label="Access Level" items={UserLevelItems} />
 
           <EnvironmentSelector<string[]>
             label="Environment access"
             multiselect
-            value={user.access || []}
           />
 
           <div className="flex justify-ebd">

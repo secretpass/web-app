@@ -7,6 +7,7 @@ import {
   IconBrandMedium,
   IconBrandReddit,
   IconBrandSlack,
+  IconCloud,
   IconCloudFilled,
   IconDeviceLaptop,
   IconExternalLink,
@@ -16,6 +17,7 @@ import {
 } from "@tabler/icons-react";
 import { type ReactNode, useState } from "react";
 import { Logo } from "@/components";
+import { isCloud, isLocal } from "@/constants";
 import { ThemeToggle } from "@/features/theme/theme-toggle";
 import { useAnalytics } from "../analytics/provider";
 
@@ -86,15 +88,21 @@ export function Navbar() {
           <Link href="/" className="flex items-center space-x-2 no-underline">
             <Logo className="size-7" />
             <span className="text-2xl font-bold">Secretpass</span>
-            <span className="text-2xl font-bold text-muted">Local</span>
-            <IconDeviceLaptop className="size-7 text-muted" />
+            {isLocal && (
+              <span className="text-2xl font-bold text-muted">Local</span>
+            )}
+            {isCloud && (
+              <span className="text-2xl font-bold text-muted">Cloud</span>
+            )}
+            {isLocal && <IconDeviceLaptop className="size-7 text-muted" />}
+            {isCloud && <IconCloud className="size-7 text-muted" />}
           </Link>
 
           <nav className="hidden md:flex items-center gap-3">
             <LinkDropDown items={community_links} label="Community" />
             <LinkDropDown items={resources_links} label="Resources" />
 
-            <CloudButton />
+            <AlternativeButton />
             <div className="flex items-center gap-4 border-l pl-4">
               <ThemeToggle />
             </div>
@@ -127,7 +135,7 @@ export function Navbar() {
               />
 
               <div className="border-t pt-4">
-                <CloudButton />
+                <AlternativeButton />
               </div>
             </div>
           </div>
@@ -137,16 +145,30 @@ export function Navbar() {
   );
 }
 
-function CloudButton() {
+function AlternativeButton() {
   return (
     <Link
-      href="https://secretpass.cloud"
+      href={
+        isLocal
+          ? "https://cloud.secretpass.cloud"
+          : "https://local.secretpass.cloud"
+      }
       target="_blank"
       className="no-underline"
     >
       <Button size="sm">
-        <IconCloudFilled className="size-4" />
-        Cloud
+        {isLocal && (
+          <>
+            {" "}
+            <IconCloudFilled className="size-4" /> Cloud{" "}
+          </>
+        )}
+        {isCloud && (
+          <>
+            {" "}
+            <IconDeviceLaptop className="size-4" /> Local{" "}
+          </>
+        )}
         <IconExternalLink className="size-4" />
       </Button>
     </Link>

@@ -1,19 +1,6 @@
 import { Description, Input, Label, TextArea, TextField } from "@heroui/react";
-import { useMemo } from "react";
-import { ENCRYPTION_ALGORITHMS } from "@/constants";
-import { useSecretManager } from "@/manager/provider";
 
 export function ProjectOverview() {
-  const manager = useSecretManager();
-
-  const algorithm = useMemo(
-    () =>
-      ENCRYPTION_ALGORITHMS.find(
-        (alg) => alg.value === manager.config.project.algorithm,
-      ),
-    [manager.config.project.algorithm],
-  );
-
   return (
     <div className="px-4 h-full w-2/3 relative overflow-y-auto">
       <div className="flex justify-between items-start mt-6">
@@ -24,13 +11,7 @@ export function ProjectOverview() {
 
       <TextField className={"mt-6"}>
         <Label htmlFor="id">Project Id</Label>
-        <Input
-          name="id"
-          variant="secondary"
-          disabled
-          spellCheck={false}
-          value={manager.config.project.id}
-        />
+        <Input name="id" variant="secondary" disabled spellCheck={false} />
       </TextField>
 
       <TextField className={"mt-6"}>
@@ -40,7 +21,6 @@ export function ProjectOverview() {
           name="name"
           variant="secondary"
           placeholder="My Top Secret Project"
-          value={manager.config.project.name}
         />
       </TextField>
 
@@ -51,7 +31,6 @@ export function ProjectOverview() {
           name="description"
           variant="secondary"
           placeholder="A brief description of the project"
-          value={manager.config.project.description}
         />
       </TextField>
       <TextField className="mt-6" aria-label="Encryption Algorithm">
@@ -61,10 +40,9 @@ export function ProjectOverview() {
           name="name"
           variant="secondary"
           placeholder="My Top Secret Project"
-          value={algorithm?.label}
         />
         <Description className="font-semibold mb-1">
-          {algorithm?.description}
+          The description goes here
         </Description>
       </TextField>
     </div>

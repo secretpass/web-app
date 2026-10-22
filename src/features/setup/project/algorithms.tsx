@@ -1,7 +1,7 @@
 import { Alert, Description, Label, Radio, RadioGroup } from "@heroui/react";
 import type { Stepper } from "@/components/stepper";
 import { ENCRYPTION_ALGORITHMS } from "@/constants";
-import type { EncryptionAlgorithm } from "@/core/web";
+import type { EncryptionAlgorithm } from "@/core";
 import type { ComplexState } from "@/utils.ts";
 import { ControlButtons } from "./controls";
 

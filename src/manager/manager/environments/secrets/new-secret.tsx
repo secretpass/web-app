@@ -4,8 +4,7 @@ import clsx from "clsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import z from "zod";
 import { SAFE_NAME_SCHEMA } from "@/constants";
-import type { SecretpassEnvironment } from "@/core/web";
-import { useCreateOrUpdateSecret } from "./shared";
+import type { SecretpassEnvironment } from "@/core";
 
 interface NewSecretProps {
   environment: SecretpassEnvironment;
@@ -39,8 +38,6 @@ export function NewSecret({ environment, onDismiss }: NewSecretProps) {
   useEffect(() => {
     ref.current?.scrollIntoView();
   }, []);
-
-  const createSecret = useCreateOrUpdateSecret(environment);
 
   return (
     <div
@@ -85,13 +82,7 @@ export function NewSecret({ environment, onDismiss }: NewSecretProps) {
         />
       </TextField>
       <div className="flex justify-end my-2">
-        <Button
-          variant="primary"
-          isDisabled={!is_valid}
-          onClick={() =>
-            createSecret(name, description, value).then(reset).then(onDismiss)
-          }
-        >
+        <Button variant="primary" isDisabled={!is_valid}>
           <IconFingerprint /> Authorize and create
         </Button>
       </div>

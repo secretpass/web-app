@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { SAFE_NAME_SCHEMA } from "@/constants";
-import type { EncryptionAlgorithm, PasskeyResidency } from "@/core/web";
+import type { EncryptionAlgorithm } from "@/core";
 
 export const NewEnvironmentItemSchema = z.object({
   name: SAFE_NAME_SCHEMA,
@@ -23,7 +23,6 @@ export interface RegistrationState {
   project_name: string;
   description: string;
   algorithm: EncryptionAlgorithm;
-  residency: PasskeyResidency;
   environments: z.infer<typeof NewEnvironmentsSchema>;
   created: string;
 

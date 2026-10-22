@@ -1,6 +1,6 @@
 import { Alert, Button, Description, IconPlus } from "@heroui/react";
 import { useState } from "react";
-import type { SecretpassEnvironment } from "@/core/web";
+import type { SecretpassEnvironment } from "@/core";
 import { NewSecret } from "./secrets/new-secret";
 import { ViewSecret } from "./secrets/show-secret";
 
@@ -43,11 +43,7 @@ export function SingleEnvironmentDashboard({
       )}
       <div className="flex flex-col gap-4">
         {environment.secrets?.map((secret) => (
-          <ViewSecret
-            key={secret.name}
-            environment={environment}
-            secret={secret}
-          />
+          <ViewSecret key={secret.name} />
         ))}
       </div>
       {creating && (

@@ -31,30 +31,22 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
   const [client, setClient] = useState<PostHog | null>(null);
 
   useEffect(() => {
-    makeRequest<AnalyticsOptions>("/api/support").then((response) => {
-      if (!response.ok) {
-        return;
-      }
-
-      const opts = response.json();
-
-      const posthog = new PostHog();
-      posthog.init(opts.project_token, {
-        autocapture: true,
-        ui_host: opts.ui_host,
-        api_host: opts.api_host,
-        defaults: "2026-06-25",
-        person_profiles: "identified_only",
-        persistence: "localStorage",
-        disable_external_dependency_loading: true,
-        __extensionClasses: {
-          ...ConversationsExtensions,
-          ...AnalyticsExtensions,
-        },
-        loaded: () => {
-          setClient(posthog);
-        },
-      });
+    const posthog = new PostHog();
+    posthog.init(import.meta.env.VITE_POSTHOG_PROJECT_TOKEN, {
+      autocapture: true,
+      ui_host: import.meta.env.VITE_POSTHOG_UI_HOST,
+      api_host: import.meta.env.VITE_POSTHOG_API_HOST,
+      defaults: "2026-06-25",
+      person_profiles: "identified_only",
+      persistence: "localStorage",
+      disable_external_dependency_loading: true,
+      __extensionClasses: {
+        ...ConversationsExtensions,
+        ...AnalyticsExtensions,
+      },
+      loaded: () => {
+        setClient(posthog);
+      },
     });
   }, []);
 

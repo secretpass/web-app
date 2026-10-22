@@ -6,20 +6,20 @@
 all: install build-local build-cloud
 
 
-local-dev:
+dev-local:
 	echo "==> Run local UI"
-	VITE_CLOUD_URL=http://localhost:8080 \
-	VITE_LOCAL_URL=http://localhost:20206 \
+	VITE_CLOUD_ORIGIN=http://localhost:8080 \
+	VITE_LOCAL_ORIGIN=http://localhost:20206 \
 	VITE_OPERATION_MODE=Local \
-	bun dev --port 3001 --strictPort
+	bun dev --host secretpass-local.localhost --port 3001 --strictPort
 
 
-cloud-dev:
+dev-cloud:
 	echo "==> Run cloud UI"
-	VITE_CLOUD_URL=http://localhost:8080 \
-	VITE_LOCAL_URL=http://localhost:20206 \
+	VITE_CLOUD_ORIGIN=http://localhost:8080 \
+	VITE_LOCAL_ORIGIN=http://localhost:20206 \
 	VITE_OPERATION_MODE=Cloud \
-	bun dev --port 3002 --strictPort
+	bun dev --host secretpass-cloud.localhost --port 3002 --strictPort
 
 install:
 	echo "==> Install npm packages"

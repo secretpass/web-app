@@ -11,79 +11,22 @@ import clsx from "clsx";
 import { useCallback, useMemo, useState } from "react";
 import { ErrorDisplay, useError } from "@/components";
 import { SAFE_NAME_SCHEMA } from "@/constants";
-import { authorize_operation, type LoginParams } from "@/core/web";
-import { useSecretManager } from "@/manager/provider";
 import type { SecretManagerConfig } from "@/types";
 import { resolveRequest } from "@/utils";
 
-export function CreateEnvironment({
-  setActiveEnvironment,
-}: {
-  setActiveEnvironment: (env: string) => void;
-}) {
-  const manager = useSecretManager();
+export function CreateEnvironment() {
   const [active, setActive] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const secret_names = useMemo(
-    () => manager.config.environments.map((env) => env.name.toLowerCase()),
-    [manager.config.environments],
-  );
   const error = useError();
 
-  const is_valid = useMemo(
-    () =>
-      SAFE_NAME_SCHEMA.validate(name) &&
-      !secret_names.includes(name.toLowerCase()),
-    [name, secret_names],
-  );
+  const is_valid = useMemo(() => SAFE_NAME_SCHEMA.validate(name), [name]);
 
   const reset = useCallback(() => {
     setActive(false);
     setName("");
     setDescription("");
   }, []);
-  const createEnvironment = useCallback(async () => {
-    const config: SecretManagerConfig = JSON.parse(
-      JSON.stringify(manager.config),
-    );
-
-    config.environments.push({
-      name,
-      description,
-    });
-
-    const params: LoginParams = {
-      user: manager.user,
-      project: config.project,
-      public_keys: [manager.public_key],
-    };
-    const auth_result = await error.catch("Authorizing error", () =>
-      authorize_operation(JSON.stringify(params)),
-    );
-    if (!auth_result.ok) {
-      return;
-    }
-
-    const update_result = await error.catch("Error updating config", () =>
-      resolveRequest("/api/project", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ config }),
-      }),
-    );
-
-    if (!update_result.ok) {
-      return;
-    }
-
-    await manager.refreshState(`Environment ${name} created successfully`);
-
-    setActiveEnvironment(name);
-    reset();
-  }, [manager, description, name, reset, setActiveEnvironment, error.catch]);
 
   return (
     <div
@@ -117,7 +60,7 @@ export function CreateEnvironment({
               onChange={(evt) => setDescription(evt.currentTarget.value)}
             />
           </TextField>
-          <Button isDisabled={!is_valid} fullWidth onClick={createEnvironment}>
+          <Button isDisabled={!is_valid} fullWidth>
             <IconFingerprint /> Authorize and Create
           </Button>
         </>

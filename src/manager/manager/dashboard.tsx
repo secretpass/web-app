@@ -9,22 +9,12 @@ import {
 import { AdministrationTabDashboard } from "./admin/dashboard";
 import { SecretsTabDashboard } from "./environments/dashboard";
 
-export interface SecretManagerDashboardProps {
-  is_active: boolean;
-  onSelection: () => void;
-}
-
-export function SecretManagerDashboard({
-  is_active,
-  onSelection,
-}: SecretManagerDashboardProps) {
+export function SecretManagerDashboard() {
   const [active_view, setActiveView] = useState<ActiveVIew>("secrets");
   return (
     <DashboardLayout
       title="Secret Manager"
-      is_active={is_active}
       Icon={IconShieldHalfFilled}
-      onSelection={onSelection}
       tabs={
         <SecretManagerTabs
           active_view={active_view}

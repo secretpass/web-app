@@ -22,3 +22,11 @@ export const SAFE_NAME_SCHEMA = z
     message:
       "Must be a valid environment variable name (letters, numbers, underscores, cannot start with a number).",
   });
+
+export const OPERATION_MODE = (import.meta.env.VITE_OPERATION_MODE ??
+  OperationMode.Local) as OperationMode;
+export const isLocal = OPERATION_MODE === OperationMode.Local;
+export const isCloud = OPERATION_MODE === OperationMode.Cloud;
+
+export const LOCAL_ORIGIN = import.meta.env.VITE_LOCAL_ORIGIN as string;
+export const CLOUD_ORIGIN = import.meta.env.VITE_CLOUD_ORIGIN as string;

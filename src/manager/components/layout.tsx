@@ -2,28 +2,23 @@ import { Card, IconChevronDown, IconChevronUp } from "@heroui/react";
 import { IconUser, IconUserShield, type TablerIcon } from "@tabler/icons-react";
 import clsx from "clsx";
 import { Activity, type ReactNode } from "react";
-import { useSecretManager } from "../provider";
 
 export interface DashboardLayoutProps {
-  is_active: boolean;
   Icon: TablerIcon;
   title: string;
   chips: ReactNode;
   tabs?: ReactNode;
   children: ReactNode;
-  onSelection: () => void;
 }
 
 export function DashboardLayout({
-  is_active,
-  onSelection,
   Icon,
   title,
   chips,
   children,
   tabs,
 }: DashboardLayoutProps) {
-  const manager = useSecretManager();
+  const is_active = true;
   return (
     <Card
       className={clsx(
@@ -32,7 +27,6 @@ export function DashboardLayout({
         !is_active &&
           "dashboard-inactive hover:bg-background-secondary cursor-pointer group",
       )}
-      onClick={!is_active ? () => onSelection() : undefined}
     >
       <Card.Header className="sticky top-0">
         <Card.Title
@@ -52,10 +46,7 @@ export function DashboardLayout({
             {title}
             {is_active && (
               <>
-                -{" "}
-                <span className="text-muted">
-                  {manager.config.project.name}
-                </span>
+                - <span className="text-muted">Project Name</span>
               </>
             )}
           </div>
@@ -74,12 +65,12 @@ export function DashboardLayout({
                 "flex px-4 gap-2 items-center py-1 border-b bg-background",
               )}
             >
-              {manager.user.level === "Standard" && <IconUser />}
-              {manager.user.level === "Admin" && <IconUserShield />}
+              {/* {manager.user.level === "Standard" && <IconUser />} */}
+              {/* {manager.user.level === "Admin" && <IconUserShield />} */}
               <div className="flex flex-col text-sm">
-                {manager.user.name}
+                {/* {manager.user.name} */}
                 <span className="text-muted text-xs">
-                  {manager.user.username}
+                  {/* {manager.user.username} */}
                 </span>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import type { EncryptionAlgorithm } from "@/core/web";
+import type { EncryptionAlgorithm } from "@/core";
 
 export const ENCRYPTION_ALGORITHMS: {
   value: EncryptionAlgorithm;

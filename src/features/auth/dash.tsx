@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@heroui/react";
 import { IconFingerprint } from "@tabler/icons-react";
-import { type SubmitEventHandler, useCallback, useState, version } from "react";
+import { type SubmitEventHandler, useCallback, useState } from "react";
 import { ErrorDisplay, useError } from "@/components";
 import { Alert } from "@/components/alert";
 
