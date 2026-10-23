@@ -12,7 +12,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ErrorDisplay, useError } from "@/components";
 import { SAFE_NAME_SCHEMA } from "@/constants";
 import type { SecretManagerConfig } from "@/types";
-import { resolveRequest } from "@/utils";
+import { resolveApiRequest } from "@/utils";
 
 export function CreateEnvironment() {
   const [active, setActive] = useState(false);

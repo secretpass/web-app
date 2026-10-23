@@ -1,6 +1,6 @@
 import { Toast } from "@heroui/react";
-// import { LoginDashboard } from "@/features/auth/dash.tsx";
 import { Navbar } from "@/features/navigation";
+import { SessionProvider } from "./auth";
 
 export function App() {
   return (
@@ -8,7 +8,7 @@ export function App() {
       <Toast.Provider />
       <Navbar />
 
-      {/* <LoginDashboard /> */}
+      <SessionProvider>Authorized content goes here</SessionProvider>
     </main>
   );
 }

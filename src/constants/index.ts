@@ -28,5 +28,4 @@ export const OPERATION_MODE = (import.meta.env.VITE_OPERATION_MODE ??
 export const isLocal = OPERATION_MODE === OperationMode.Local;
 export const isCloud = OPERATION_MODE === OperationMode.Cloud;
 
-export const LOCAL_ORIGIN = import.meta.env.VITE_LOCAL_ORIGIN as string;
-export const CLOUD_ORIGIN = import.meta.env.VITE_CLOUD_ORIGIN as string;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;

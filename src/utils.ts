@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { create } from "zustand";
-import type { SecretpassProject } from "./core/web";
+import { API_BASE_URL } from "./constants";
 
 export type ComplexState<T extends object> = T & {
   readonly reset: () => void;
@@ -23,8 +23,8 @@ export function useComplexState<T extends object>(
   return useZustandState();
 }
 
-export async function makeRequest<T = unknown>(
-  input: RequestInfo | URL,
+export async function makeApiRequest<T = unknown>(
+  path: string,
   init?: RequestInit,
 ) {
   const headers =
@@ -34,7 +34,12 @@ export async function makeRequest<T = unknown>(
           "Content-Type": "application/json",
         }
       : undefined);
-  const response = await fetch(input, { ...init, headers });
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    headers,
+    credentials: "include",
+    mode: "cors",
+  });
 
   const text = await response.text();
   return {
@@ -48,11 +53,11 @@ export async function makeRequest<T = unknown>(
   };
 }
 
-export async function resolveRequest<T = unknown>(
-  input: RequestInfo | URL,
+export async function resolveApiRequest<T = unknown>(
+  path: string,
   init?: RequestInit,
 ): Promise<T> {
-  const response = await makeRequest<T>(input, init);
+  const response = await makeApiRequest<T>(path, init);
 
   if (response.ok) {
     if (!response.text) {
@@ -62,30 +67,6 @@ export async function resolveRequest<T = unknown>(
   }
 
   return Promise.reject(response.text);
-}
-
-export function assertProjectEqual(a: SecretpassProject, b: SecretpassProject) {
-  if (a.id !== b.id) {
-    throw new Error(
-      `Project ID mismatch ${a.id}(${a.name}) != ${b.id}(${b.name})`,
-    );
-  }
-  if (a.algorithm !== b.algorithm) {
-    throw new Error(
-      `Encryption algorithm mismatch ${a.algorithm} != ${b.algorithm}`,
-    );
-  }
-
-  if (a.residency !== b.residency) {
-    throw new Error(
-      `Passkey residency mismatch ${a.residency} != ${b.residency}`,
-    );
-  }
-  if (a.created_at !== b.created_at) {
-    throw new Error(
-      `Project creation date mismatch ${a.created_at} != ${b.created_at}`,
-    );
-  }
 }
 
 export function clone<T>(object: T, update?: (cloned: T) => T): T {

@@ -162,7 +162,7 @@
 }
 
 .content {
-  height: calc(100vh - 4em);
+  min-height: calc(100vh - 4em);
 }
 
 .dashboard-active {

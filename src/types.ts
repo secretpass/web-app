@@ -3,7 +3,7 @@ import type {
   SecretpassEnvironment,
   SecretpassProject,
   SecretpassUser,
-} from "./core/web";
+} from "./core";
 
 export interface SecretManagerConfig {
   mode: OperationMode;

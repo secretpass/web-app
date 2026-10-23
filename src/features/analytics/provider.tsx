@@ -13,7 +13,7 @@ import {
   useState,
 } from "react";
 
-import { makeRequest } from "@/utils";
+import { makeApiRequest } from "@/utils";
 
 interface AnalyticsOptions {
   ui_host: string;

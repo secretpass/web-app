@@ -11,7 +11,7 @@ import {
 import { useAnalytics } from "@/features/analytics/provider";
 import type { RegistrationState } from "@/features/setup/project/types.ts";
 import type { SecretManagerConfig } from "@/types";
-import { type ComplexState, resolveRequest } from "@/utils.ts";
+import { type ComplexState, resolveApiRequest } from "@/utils.ts";
 
 interface CompletionScreenProps {
   state: ComplexState<RegistrationState>;

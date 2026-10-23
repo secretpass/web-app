@@ -5,6 +5,8 @@ import { Alert } from "./alert";
 
 export type ErrorValue = { title: string; content: string };
 
+export const ABORT_ERROR = "CATCH_ABORT_ERROR";
+
 export type UnsafeFunction<T> = () => Promise<T>;
 export type UnsafeEvaluationResult<T> =
   | { ok: true; result: T }
@@ -38,6 +40,13 @@ export function useError() {
           result,
         };
       } catch (error) {
+        if (error === ABORT_ERROR) {
+          return {
+            ok: false,
+            error: "",
+          };
+        }
+
         setValue({ title, content: String(error) });
         if (options?.capture) {
           analytics?.capture(options.capture, { success: true });
