@@ -29,3 +29,5 @@ export const isLocal = OPERATION_MODE === OperationMode.Local;
 export const isCloud = OPERATION_MODE === OperationMode.Cloud;
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+export const CONNECTION_REFUSED_ERR = "CONNECTION_REFUSED_ERROR";

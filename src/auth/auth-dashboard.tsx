@@ -1,9 +1,12 @@
-import { Card, Tabs } from "@heroui/react";
+import { Button, Card, Tabs } from "@heroui/react";
+import { IconRefresh } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Activity, useState } from "react";
-import { useError } from "@/components";
 import { Alert } from "@/components/alert";
 import { Shimmer } from "@/components/shimmer";
+import { isCloud, isLocal } from "@/constants";
 import { LoginView } from "./login";
+import { SESSION_QUERY_KEY } from "./query";
 import { RegistrationView } from "./register";
 
 export enum ActiveView {
@@ -13,10 +16,16 @@ export enum ActiveView {
 
 interface AuthDashboardProps {
   isPending: boolean;
+  disconnected: boolean;
 }
 
-export function AuthDashboard({ isPending }: AuthDashboardProps) {
-  const error = useError();
+const CONNECTED_TITLE = "Login or Register";
+const DISCONNECTED_TITLE = isLocal
+  ? "Offline - Local service is unreachable"
+  : "Offline - Cloud connection refused";
+
+export function AuthDashboard({ isPending, disconnected }: AuthDashboardProps) {
+  const queryClient = useQueryClient();
   const [view, setView] = useState<ActiveView>(ActiveView.Login);
 
   return (
@@ -26,14 +35,17 @@ export function AuthDashboard({ isPending }: AuthDashboardProps) {
         <Card.Header>
           <Card.Title className="text-xl font-light mb-4">
             <Shimmer active={isPending} className="w-1/2 h-6">
-              Login or Register
+              {disconnected ? DISCONNECTED_TITLE : CONNECTED_TITLE}
             </Shimmer>
           </Card.Title>
-          <Shimmer active={isPending} className="w-full h-8">
+          <Shimmer
+            active={isPending}
+            hidden={disconnected}
+            className="w-full h-8"
+          >
             <Tabs
               className="w-full"
               variant="secondary"
-              isDisabled={error.is_pending}
               selectedKey={view}
               onSelectionChange={(key) => setView(key as ActiveView)}
             >
@@ -55,19 +67,49 @@ export function AuthDashboard({ isPending }: AuthDashboardProps) {
 
         <Card.Content className="mt-6">
           <Shimmer active={isPending} className="w-full h-32">
-            <Activity mode={view === ActiveView.Login ? "visible" : "hidden"}>
+            <Activity
+              mode={
+                view === ActiveView.Login && !disconnected
+                  ? "visible"
+                  : "hidden"
+              }
+            >
               <LoginView />
             </Activity>
             <Activity
-              mode={view === ActiveView.Register ? "visible" : "hidden"}
+              mode={
+                view === ActiveView.Register && !disconnected
+                  ? "visible"
+                  : "hidden"
+              }
             >
               <RegistrationView />
             </Activity>
+
+            {disconnected && isCloud && (
+              <Alert
+                title="Please check your internet connection"
+                status="danger"
+                className="shadow-none bg-background"
+              >
+                The application cannot establish a connection with the cloud
+                backend, please resolve the connection issue and retry.
+                <br />
+                If the issue persists, please reach out to{" "}
+                <a href="mailto:support@secretpass.cloud">
+                  support@secretpass.cloud
+                </a>
+              </Alert>
+            )}
           </Shimmer>
         </Card.Content>
         {view === ActiveView.Login && (
           <Card.Footer className="mt-4">
-            <Shimmer active={isPending} className="w-full h-24">
+            <Shimmer
+              active={isPending}
+              hidden={disconnected}
+              className="w-full h-24"
+            >
               <Alert
                 status="warning"
                 title="Email login limitations"
@@ -90,6 +132,20 @@ export function AuthDashboard({ isPending }: AuthDashboardProps) {
                 </ul>
               </Alert>
             </Shimmer>
+            {disconnected && (
+              <div className="flex justify-end w-full">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() =>
+                    queryClient.resetQueries({ queryKey: SESSION_QUERY_KEY })
+                  }
+                >
+                  <IconRefresh className="size-5" />
+                  Reload
+                </Button>
+              </div>
+            )}
           </Card.Footer>
         )}
       </Card>

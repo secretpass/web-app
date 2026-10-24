@@ -71,7 +71,7 @@ export function LoginView() {
         return;
       }
 
-      queryClient.resetQueries({ queryKey: SESSION_QUERY_KEY });
+      queryClient.setQueryData(SESSION_QUERY_KEY, completion_result.result);
       toast("Login successful!", { variant: "success" });
     },
     [error.catch, queryClient],
@@ -139,7 +139,7 @@ export function LoginView() {
         return;
       }
 
-      queryClient.resetQueries({ queryKey: SESSION_QUERY_KEY });
+      queryClient.setQueryData(SESSION_QUERY_KEY, completion_result.result);
       toast("Login successful!", { variant: "success" });
     },
     onSubmitMeta: { verified_email: "" },

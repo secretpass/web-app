@@ -1,5 +1,6 @@
-import { createContext, type ReactNode } from "react";
+import { createContext, type ReactNode, useMemo } from "react";
 import type { SessionPackage } from "@/api-types/SessionPackage";
+import { CONNECTION_REFUSED_ERR } from "@/constants";
 import { AuthDashboard } from "./auth-dashboard";
 import { useSessionQuery } from "./query";
 
@@ -7,6 +8,10 @@ const SessionContext = createContext<SessionPackage>(JSON.parse("null"));
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const session = useSessionQuery();
+  const connection_refused = useMemo(
+    () => String(session.error) === CONNECTION_REFUSED_ERR,
+    [session.error],
+  );
 
   return (
     <>
@@ -15,7 +20,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           {children}
         </SessionContext.Provider>
       )}
-      {!session.isSuccess && <AuthDashboard isPending={session.isPending} />}
+      {!session.isSuccess && (
+        <AuthDashboard
+          disconnected={connection_refused}
+          isPending={session.isPending}
+        />
+      )}
     </>
   );
 }

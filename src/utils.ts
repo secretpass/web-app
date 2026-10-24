@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { create } from "zustand";
-import { API_BASE_URL } from "./constants";
+import { API_BASE_URL, CONNECTION_REFUSED_ERR } from "./constants";
 
 export type ComplexState<T extends object> = T & {
   readonly reset: () => void;
@@ -57,16 +57,20 @@ export async function resolveApiRequest<T = unknown>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
-  const response = await makeApiRequest<T>(path, init);
+  try {
+    const response = await makeApiRequest<T>(path, init);
 
-  if (response.ok) {
-    if (!response.text) {
-      return undefined as unknown as T;
+    if (response.ok) {
+      if (!response.text) {
+        return undefined as unknown as T;
+      }
+      return response.json();
     }
-    return response.json();
-  }
 
-  return Promise.reject(response.text);
+    return Promise.reject(response.text);
+  } catch (_err) {
+    return Promise.reject(CONNECTION_REFUSED_ERR);
+  }
 }
 
 export function clone<T>(object: T, update?: (cloned: T) => T): T {

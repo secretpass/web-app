@@ -14,6 +14,7 @@ import * as z from "zod";
 import type { AuthorizationResponse } from "@/api-types/AuthorizationResponse";
 import type { CreateUserRequest } from "@/api-types/CreateUserRequest";
 import type { RegistrationResponse } from "@/api-types/RegistrationResponse";
+import type { SessionPackage } from "@/api-types/SessionPackage";
 import { ErrorDisplay, useError } from "@/components";
 import { ConfirmationCodeInput, generateChallenge } from "@/components/otp";
 import {
@@ -127,7 +128,7 @@ export function RegistrationView() {
       const registration_result = await error.catch(
         "Error creating account",
         () =>
-          resolveApiRequest("/api/auth/register", {
+          resolveApiRequest<SessionPackage>("/api/auth/register", {
             method: "POST",
             body: JSON.stringify({
               id: data.meta.id,
@@ -149,7 +150,7 @@ export function RegistrationView() {
         return;
       }
 
-      queryClient.resetQueries({ queryKey: SESSION_QUERY_KEY });
+      queryClient.setQueryData(SESSION_QUERY_KEY, registration_result.result);
 
       toast("Registration successful!", { variant: "success" });
     },
