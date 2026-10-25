@@ -1,6 +1,8 @@
 import { Toast } from "@heroui/react";
-import { Navbar } from "@/features/navigation";
+import { Route, Routes } from "react-router";
+import { Navbar } from "@/navigation";
 import { SessionProvider } from "./auth";
+import { HomeDashboard } from "./features/home/WelcomeDashboard";
 
 export function App() {
   return (
@@ -8,7 +10,11 @@ export function App() {
       <Toast.Provider />
       <Navbar />
 
-      <SessionProvider>Authorized content goes here</SessionProvider>
+      <SessionProvider>
+        <Routes>
+          <Route path="/" element={<HomeDashboard />} />
+        </Routes>
+      </SessionProvider>
     </main>
   );
 }

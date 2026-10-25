@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useMemo } from "react";
+import { createContext, type ReactNode, useContext, useMemo } from "react";
 import type { SessionPackage } from "@/api-types/SessionPackage";
 import { CONNECTION_REFUSED_ERR } from "@/constants";
 import { AuthDashboard } from "./auth-dashboard";
@@ -28,4 +28,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       )}
     </>
   );
+}
+
+export function useSession() {
+  return useContext(SessionContext);
 }

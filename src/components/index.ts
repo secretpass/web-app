@@ -1,4 +1,6 @@
 export { Alert, type AlertProps } from "./alert";
+export { CommandDisplay } from "./command";
+export { DropdownItem, type DropdownItemProps } from "./dropdown";
 export { ErrorDisplay, type ErrorValue, useError } from "./error";
 export { Logo } from "./logo";
 export {

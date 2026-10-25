@@ -95,7 +95,7 @@ export function RegistrationView() {
       setDetails({
         id: user_id,
         email: data.value.email,
-        name: data.value.email,
+        name: data.value.name,
         challenge: passkey_challenge.result.challenge,
         passkey_response: create_result.result,
       });

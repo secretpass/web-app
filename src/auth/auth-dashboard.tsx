@@ -6,6 +6,7 @@ import { Alert } from "@/components/alert";
 import { Shimmer } from "@/components/shimmer";
 import { isCloud, isLocal } from "@/constants";
 import { LoginView } from "./login";
+import { LocalOfflineInstructions } from "./offline-instructions";
 import { SESSION_QUERY_KEY } from "./query";
 import { RegistrationView } from "./register";
 
@@ -101,6 +102,7 @@ export function AuthDashboard({ isPending, disconnected }: AuthDashboardProps) {
                 </a>
               </Alert>
             )}
+            {disconnected && isLocal && <LocalOfflineInstructions />}
           </Shimmer>
         </Card.Content>
         {view === ActiveView.Login && (
