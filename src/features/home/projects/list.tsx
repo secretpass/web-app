@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import type { ProjectListItem } from "@/api-types/ProjectListItem";
 import type { ProjectPath } from "@/api-types/ProjectPath";
-import type { SecretpassProject } from "@/api-types/SecretpassProject";
+import type { SpassProject } from "@/api-types/SpassProject";
 import { Alert, CommandDisplay } from "@/components";
 import { SectionHeader } from "@/components/sections/header";
 import { isCloud, isLocal } from "@/constants";
@@ -57,7 +57,7 @@ function ProjectCard({
   project,
   path,
 }: {
-  project: SecretpassProject;
+  project: SpassProject;
   path: ProjectPath | null;
   inaccessible?: boolean;
 }) {

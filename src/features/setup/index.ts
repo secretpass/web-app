@@ -1,1 +1,0 @@
-export { NewProjectSetup } from "./new";

@@ -24,6 +24,8 @@ dist-ssr
 *.sw?
 .env
 
-# Wasm core build
+# Wasm core encryption and decryption module functions and types
 src/core
+
+# Rust structs exported as typescript types
 src/api-types

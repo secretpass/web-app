@@ -78,6 +78,8 @@ export function useError() {
   };
 }
 
+export type ErrorHook = ReturnType<typeof useError>;
+
 export function ErrorDisplay({ value }: { value: ErrorValue | null }) {
   return (
     <Activity mode={value ? "visible" : "hidden"}>

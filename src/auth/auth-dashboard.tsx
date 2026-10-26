@@ -5,14 +5,14 @@ import { Activity, useState } from "react";
 import { Alert } from "@/components/alert";
 import { Shimmer } from "@/components/shimmer";
 import { isCloud, isLocal } from "@/constants";
-import { LoginView } from "./login";
 import { LocalOfflineInstructions } from "./offline-instructions";
 import { SESSION_QUERY_KEY } from "./query";
-import { RegistrationView } from "./register";
+import { SignInForm } from "./SignIn";
+import { SignupForm } from "./signup";
 
 export enum ActiveView {
-  Login = "login",
-  Register = "register",
+  SignIn = "sign-in",
+  Signup = "signup",
 }
 
 interface AuthDashboardProps {
@@ -20,14 +20,14 @@ interface AuthDashboardProps {
   disconnected: boolean;
 }
 
-const CONNECTED_TITLE = "Login or Register";
+const CONNECTED_TITLE = "Sign in or Create account";
 const DISCONNECTED_TITLE = isLocal
   ? "Offline - Local service is unreachable"
   : "Offline - Cloud connection refused";
 
 export function AuthDashboard({ isPending, disconnected }: AuthDashboardProps) {
   const queryClient = useQueryClient();
-  const [view, setView] = useState<ActiveView>(ActiveView.Login);
+  const [view, setView] = useState<ActiveView>(ActiveView.SignIn);
 
   return (
     <div className="content flex flex-col items-center gap-8">
@@ -52,13 +52,13 @@ export function AuthDashboard({ isPending, disconnected }: AuthDashboardProps) {
             >
               <Tabs.ListContainer>
                 <Tabs.List>
-                  <Tabs.Tab id={ActiveView.Login}>
+                  <Tabs.Tab id={ActiveView.SignIn}>
                     <Tabs.Indicator />
-                    Login
+                    Sign in
                   </Tabs.Tab>
-                  <Tabs.Tab id={ActiveView.Register}>
+                  <Tabs.Tab id={ActiveView.Signup}>
                     <Tabs.Indicator />
-                    Register
+                    Create Account
                   </Tabs.Tab>
                 </Tabs.List>
               </Tabs.ListContainer>
@@ -70,21 +70,21 @@ export function AuthDashboard({ isPending, disconnected }: AuthDashboardProps) {
           <Shimmer active={isPending} className="w-full h-32">
             <Activity
               mode={
-                view === ActiveView.Login && !disconnected
+                view === ActiveView.SignIn && !disconnected
                   ? "visible"
                   : "hidden"
               }
             >
-              <LoginView />
+              <SignInForm />
             </Activity>
             <Activity
               mode={
-                view === ActiveView.Register && !disconnected
+                view === ActiveView.Signup && !disconnected
                   ? "visible"
                   : "hidden"
               }
             >
-              <RegistrationView />
+              <SignupForm />
             </Activity>
 
             {disconnected && isCloud && (
@@ -105,7 +105,7 @@ export function AuthDashboard({ isPending, disconnected }: AuthDashboardProps) {
             {disconnected && isLocal && <LocalOfflineInstructions />}
           </Shimmer>
         </Card.Content>
-        {view === ActiveView.Login && (
+        {view === ActiveView.SignIn && (
           <Card.Footer className="mt-4">
             <Shimmer
               active={isPending}

@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router";
 import { Navbar } from "@/navigation";
 import { SessionProvider } from "./auth";
 import { HomeDashboard } from "./features/home/WelcomeDashboard";
+import { CreateProject } from "./projects/create/CreateProject";
 
 export function App() {
   return (
@@ -13,6 +14,7 @@ export function App() {
       <SessionProvider>
         <Routes>
           <Route path="/" element={<HomeDashboard />} />
+          <Route path="/new" element={<CreateProject />} />
         </Routes>
       </SessionProvider>
     </main>

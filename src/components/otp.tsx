@@ -99,7 +99,7 @@ export function ConfirmationCodeInput({
   }, [kind, owner, value, error.catch, onConfirmation]);
 
   return (
-    <TextField isInvalid={is_valid === false}>
+    <TextField isInvalid={is_valid === false} isRequired>
       <Label className={clsx(is_valid && "text-success")}>
         Confirmation Code
       </Label>
