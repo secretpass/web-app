@@ -1,14 +1,8 @@
-import {
-  Alert,
-  Button,
-  Description,
-  Input,
-  Label,
-  Tooltip,
-} from "@heroui/react";
-import { IconTrashFilled } from "@tabler/icons-react";
+import { Button, IconPlus, Input, InputGroup, Tooltip } from "@heroui/react";
+import { IconAlignLeft, IconCode, IconTrashFilled } from "@tabler/icons-react";
 import clsx from "clsx";
 import * as uuid from "uuid";
+import { SectionHeader } from "@/components/sections/header";
 import type { CreateProjectForm } from "./CreateProjectForm";
 
 export function NewProjectEnvironmentDefinitions({
@@ -19,29 +13,14 @@ export function NewProjectEnvironmentDefinitions({
   return (
     <form.Field name="environments">
       {(field) => (
-        <div>
-          <div className="flex flex-col gap-2">
-            <Label>Secret Environment</Label>
-            <Description>
-              Organize your secrets into different environments, environment
-              access can be restricted per user/machine.
-            </Description>
-          </div>
-          {field.state.value.map((env, index) => (
-            <EnvironmentEditor key={env.id} index={index} form={form} />
-          ))}
-          <Alert status="success" className="shadow-none">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>
-                Environments can be added, edited or deleted accordingly after
-                the project setup has been completed.
-              </Alert.Title>
-            </Alert.Content>
-          </Alert>
-
-          <div className="flex justify-end">
+        <>
+          <SectionHeader
+            title="Secret Environments"
+            description="Organize your secrets into different environments, environment access can be restricted per user/machine."
+            className={clsx(!field.state.meta.isValid && "border-b-danger")}
+          >
             <Button
+              size="sm"
               aria-label="Add Environment"
               isDisabled={!field.state.meta.isValid}
               variant="ghost"
@@ -53,10 +32,22 @@ export function NewProjectEnvironmentDefinitions({
                 })
               }
             >
+              <IconPlus />
               Add Environment
             </Button>
+          </SectionHeader>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {field.state.value.map((env, index) => (
+              <EnvironmentEditor
+                key={env.id}
+                index={index}
+                form={form}
+                onDelete={() => field.removeValue(index)}
+              />
+            ))}
           </div>
-        </div>
+        </>
       )}
     </form.Field>
   );
@@ -65,53 +56,66 @@ export function NewProjectEnvironmentDefinitions({
 function EnvironmentEditor({
   index,
   form,
+  onDelete,
 }: {
   index: number;
   form: CreateProjectForm;
+  onDelete: () => void;
 }) {
   return (
     <form.FormGroup name={`environments[${index}]`}>
       {(group) => (
         <div
           className={clsx(
-            "p-2 rounded-lg flex flex-col gap-2 bg-gray-300 dark:bg-gray-700",
+            "p-4 rounded-xl flex flex-col gap-2 bg-gray-300 dark:bg-gray-700",
             !group.state.meta.isValid && "border border-danger",
           )}
         >
           <form.Field name={`environments[${index}].name`}>
             {(field) => (
-              <div className="flex gap-2 items-center">
-                <Input
+              <InputGroup isInvalid={!field.state.meta.isValid}>
+                <InputGroup.Prefix>
+                  <IconCode />
+                </InputGroup.Prefix>
+                <InputGroup.Input
+                  required
                   aria-label="Environment name"
                   placeholder="Env name"
-                  className="grow"
-                  value={field.name}
+                  className="font-mono font-semibold"
+                  value={field.state.value}
                   onChange={(e) => field.handleChange(e.currentTarget.value)}
                 />
-                <Tooltip>
-                  <Button
-                    aria-label="Delete Environment"
-                    variant="ghost"
-                    className="text-muted hover:text-danger"
-                    isIconOnly
-                    onClick={() => field.removeValue(index)}
-                  >
-                    <IconTrashFilled />
-                  </Button>
-                  <Tooltip.Content>Delete environment</Tooltip.Content>
-                </Tooltip>
-              </div>
+                <InputGroup.Suffix>
+                  <Tooltip>
+                    <Button
+                      aria-label="Delete Environment"
+                      variant="ghost"
+                      className="text-muted hover:text-danger"
+                      isIconOnly
+                      onClick={onDelete}
+                    >
+                      <IconTrashFilled />
+                    </Button>
+                    <Tooltip.Content>Delete environment</Tooltip.Content>
+                  </Tooltip>
+                </InputGroup.Suffix>
+              </InputGroup>
             )}
           </form.Field>
           <form.Field name={`environments[${index}].description`}>
             {(field) => (
-              <Input
-                aria-label="Environment description"
-                placeholder="Description"
-                variant="secondary"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.currentTarget.value)}
-              />
+              <InputGroup>
+                <InputGroup.Prefix>
+                  <IconAlignLeft />
+                </InputGroup.Prefix>
+                <InputGroup.Input
+                  className="text-muted"
+                  aria-label="Environment description"
+                  placeholder="Description"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.currentTarget.value)}
+                />
+              </InputGroup>
             )}
           </form.Field>
         </div>

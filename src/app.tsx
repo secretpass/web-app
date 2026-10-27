@@ -2,7 +2,7 @@ import { Toast } from "@heroui/react";
 import { Route, Routes } from "react-router";
 import { Navbar } from "@/navigation";
 import { SessionProvider } from "./auth";
-import { HomeDashboard } from "./features/home/WelcomeDashboard";
+import { HomeDashboard } from "./home/WelcomeDashboard";
 import { CreateProject } from "./projects/create/CreateProject";
 
 export function App() {

@@ -1,3 +1,4 @@
+import { IconFolder, IconShieldHalfFilled } from "@tabler/icons-react";
 import { Link } from "react-router";
 import type { ProjectListItem } from "@/api-types/ProjectListItem";
 import type { ProjectPath } from "@/api-types/ProjectPath";
@@ -40,14 +41,17 @@ export function ProjectsList({
             )}
           </Alert>
         )}
-        {projects.map(({ path, project }) => (
-          <ProjectCard
-            inaccessible={inaccessible}
-            key={project.id}
-            project={project}
-            path={path}
-          />
-        ))}
+
+        <div className="grid gap-x-6 gap-y-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          {projects.map(({ path, project }) => (
+            <ProjectCard
+              inaccessible={inaccessible}
+              key={project.id}
+              project={project}
+              path={path}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -62,10 +66,24 @@ function ProjectCard({
   inaccessible?: boolean;
 }) {
   return (
-    <Link to={`/project/${project.id}`} className="bg-white dark:bg-slate-900">
-      <div>{project.name}</div>
+    <Link
+      to={`/p/${project.id}`}
+      className="bg-background hover:bg-background-secondary p-4 rounded-xl flex gap-4 items-start"
+    >
+      <IconShieldHalfFilled className="size-6" />
+      <div className="flex flex-col gap-2 grow">
+        <div className="font-semibold">{project.name}</div>
+        {project.description && (
+          <div className="text-xs text-muted">{project.description}</div>
+        )}
 
-      {path !== null && <div>{path.short_path}</div>}
+        {path !== null && (
+          <div className="flex justify-end text-xs font-mono items-center text-muted">
+            <IconFolder className="size-4" />
+            {path.short_path}
+          </div>
+        )}
+      </div>
     </Link>
   );
 }

@@ -14,7 +14,6 @@ export function ProjectOverview({ form }: { form: CreateProjectForm }) {
             </Description>
             <Input
               name="name"
-              variant="secondary"
               placeholder="My Top Secret Project"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -29,7 +28,6 @@ export function ProjectOverview({ form }: { form: CreateProjectForm }) {
             <Label htmlFor="description">Description</Label>
             <TextArea
               name="description"
-              variant="secondary"
               placeholder="A brief description of the project"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}

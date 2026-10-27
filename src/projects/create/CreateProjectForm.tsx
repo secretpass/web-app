@@ -1,8 +1,20 @@
+import { toast } from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router";
 import * as uuid from "uuid";
 import * as z from "zod";
+import type { CreateProjectRequest } from "@/api-types/CreateProjectRequest";
 import type { EncryptionAlgorithm } from "@/api-types/EncryptionAlgorithm";
+import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
+import type { SpassProject } from "@/api-types/SpassProject";
+import { useSession } from "@/auth";
+import { useAuthorization } from "@/auth/useAuthorization";
+import type { ErrorHook } from "@/components/error";
 import { SAFE_NAME_SCHEMA } from "@/constants";
+import { authorize_operation } from "@/core";
+import { resolveApiRequest } from "@/utils";
+import { PROJECT_LIST_QUERY_KEY } from "../queries";
 
 const createEnvironmentSchema = z.object({
   id: z.string(),
@@ -37,7 +49,11 @@ const create_project_schema = z.object({
 
 export type CreateProjectFormData = z.infer<typeof create_project_schema>;
 
-export function useCreateProjectForm() {
+export function useCreateProjectForm(path: string | null, error: ErrorHook) {
+  const authorize = useAuthorization(error);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -63,10 +79,39 @@ export function useCreateProjectForm() {
     } satisfies CreateProjectFormData,
     validators: {
       onChange: create_project_schema,
+      onMount: create_project_schema,
     },
     onSubmitMeta: {} as { path: string | null },
-    onSubmit: async (data) => {
-      console.log(data);
+    onSubmit: async ({
+      value: { algorithm, description, environments, name },
+    }) => {
+      const auth_op = await authorize("project creation");
+      if (!auth_op.ok) {
+        return;
+      }
+
+      const create_op = await error.catch("Error creating project", () =>
+        resolveApiRequest<SpassProject>("/api/projects", {
+          method: "POST",
+          body: JSON.stringify({
+            path,
+            name,
+            algorithm: algorithm as EncryptionAlgorithm,
+            description,
+            environments,
+            auth_response: auth_op.result as PasskeyAuthorizationResult,
+          } satisfies CreateProjectRequest),
+        }),
+      );
+
+      if (!create_op.ok) {
+        return;
+      }
+
+      toast(`Project '${name}' created successfully!`, { variant: "success" });
+      queryClient
+        .invalidateQueries({ queryKey: PROJECT_LIST_QUERY_KEY })
+        .then(() => navigate(`/p/${create_op.result.id}`));
     },
   });
 

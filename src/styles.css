@@ -161,6 +161,10 @@
   --accent-soft-foreground: oklch(0.9848 0 0);
 }
 
+body {
+  @apply bg-background;
+}
+
 .content {
   min-height: calc(100vh - 4em);
 }
@@ -175,4 +179,9 @@
 
 .dashboard-content-height {
   height: calc(100% - 4em);
+}
+
+.sticky-below-nav {
+  top: 4em;
+  position: sticky;
 }

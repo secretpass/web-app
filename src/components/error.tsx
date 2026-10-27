@@ -1,4 +1,5 @@
 import { toast } from "@heroui/react";
+import clsx from "clsx";
 import { Activity, useCallback, useState } from "react";
 import { useAnalytics } from "@/features/analytics/provider";
 import { Alert } from "./alert";
@@ -80,10 +81,20 @@ export function useError() {
 
 export type ErrorHook = ReturnType<typeof useError>;
 
-export function ErrorDisplay({ value }: { value: ErrorValue | null }) {
+export function ErrorDisplay({
+  value,
+  className,
+}: {
+  value: ErrorValue | null;
+  className?: string;
+}) {
   return (
     <Activity mode={value ? "visible" : "hidden"}>
-      <Alert title={value?.title} className="max-w-full" status="danger">
+      <Alert
+        title={value?.title}
+        className={clsx("max-w-full", className)}
+        status="danger"
+      >
         {value?.content}
       </Alert>
     </Activity>

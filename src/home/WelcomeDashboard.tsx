@@ -8,6 +8,7 @@ import { Shimmer } from "@/components/shimmer";
 import { isCloud, isLocal, OPERATION_MODE } from "@/constants";
 import { useProjectsListQuery } from "@/projects";
 import { CreatePasskeyButton } from "@/user/CreatePasskey";
+import { HelpTopicList } from "./help";
 import { ProjectsList } from "./projects/list";
 import { PendingProjectsList } from "./projects/pending";
 
@@ -66,11 +67,15 @@ export function HomeDashboard() {
         </Shimmer>
       )}
 
-      {!projects_list.isPending && (
-        <div className="flex gap-8 my-8 items-center">
-          <Separator className="flex-1" />
-          <div className="text-muted">Missing something?</div>
-          <Separator className="flex-1" />
+      {!projects_list.isPending && isLocal && (
+        <div>
+          <div className="flex gap-8 my-8 items-center">
+            <Separator className="flex-1" />
+            <div className="text-muted">Missing something?</div>
+            <Separator className="flex-1" />
+          </div>
+
+          <HelpTopicList />
         </div>
       )}
     </div>
