@@ -4,6 +4,8 @@ import { Navbar } from "@/navigation";
 import { SessionProvider } from "./auth";
 import { HomeDashboard } from "./home/WelcomeDashboard";
 import { CreateProject } from "./projects/create/CreateProject";
+import { EnvironmentDashboard } from "./projects/environments/EnvironmentDashboard";
+import { ProjectHome } from "./projects/home/ProjectHome";
 
 export function App() {
   return (
@@ -13,8 +15,17 @@ export function App() {
 
       <SessionProvider>
         <Routes>
-          <Route path="/" element={<HomeDashboard />} />
-          <Route path="/new" element={<CreateProject />} />
+          <Route index element={<HomeDashboard />} />
+          <Route path="new" element={<CreateProject />} />
+
+          <Route path="p">
+            <Route path=":project_id">
+              <Route index element={<ProjectHome />} />
+              <Route path="env">
+                <Route path=":env_name" element={<EnvironmentDashboard />} />
+              </Route>
+            </Route>
+          </Route>
         </Routes>
       </SessionProvider>
     </main>

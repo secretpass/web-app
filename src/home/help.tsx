@@ -12,9 +12,20 @@ const HELP_TOPICS: HelpTopicItem[] = [
     title: "Can't see your project?",
     details: (
       <div>
-        Please navigate to the project folder and run:
-        <CommandDisplay className="my-2">spass attach</CommandDisplay>
-        This will give secretpass visibility into the project directory.
+        Please navigate to the project folder and run
+        <CommandDisplay subtle>spass attach</CommandDisplay>. This will give
+        secretpass visibility into the project directory.
+      </div>
+    ),
+  },
+  {
+    title: "Want to setup a new project?",
+    details: (
+      <div>
+        Please navigate to the target folder and run
+        <CommandDisplay subtle>spass attach</CommandDisplay>. The project will
+        appear under pending projects and you can proceed to complete the set
+        up.
       </div>
     ),
   },
@@ -26,7 +37,7 @@ const HELP_TOPICS: HelpTopicItem[] = [
   {
     title: "Why is my project under inaccessible projects?",
     details:
-      "This happens when you have a project attached to secretpass locally but it's not under the current user name, just login with the relevant username to access the project.",
+      "The project is attached to secretpass locally but it's not under the current user name, just login with the relevant username to access the project.",
   },
 ];
 

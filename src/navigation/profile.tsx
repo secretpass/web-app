@@ -1,5 +1,4 @@
 import {
-  Button,
   Description,
   Dropdown,
   Header,
@@ -14,13 +13,13 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 import { type MouseEventHandler, useCallback } from "react";
-import type { SecretpassUser } from "@/api-types/SecretpassUser";
+import type { SpassUser } from "@/api-types/SpassUser";
 import { useLogoutMutation } from "@/auth/query";
 import { DropdownItem, useError } from "@/components";
 import { isCloud, isLocal } from "@/constants";
 import { COMMUNITY_LINKS, RESOURCES_LINKS } from "./links";
 
-export function UserProfileButton({ user }: { user: SecretpassUser }) {
+export function UserProfileButton({ user }: { user: SpassUser }) {
   const error = useError();
   const logout = useLogoutMutation();
   const logoutCallback: MouseEventHandler = useCallback(() => {
@@ -35,14 +34,14 @@ export function UserProfileButton({ user }: { user: SecretpassUser }) {
   return (
     <Dropdown>
       <Dropdown.Trigger>
-        <Button variant="ghost" className="h-auto">
+        <div className="button button--md button--ghost h-auto">
           <IconUserCircle className="size-8" />
           <div className="flex grow flex-col text-left">
             <Label>{user.name}</Label>
             <Description>{user.email}</Description>
           </div>
           <IconChevronDown />
-        </Button>
+        </div>
       </Dropdown.Trigger>
       <Dropdown.Popover>
         <Dropdown.Menu>
