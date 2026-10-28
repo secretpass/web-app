@@ -1,10 +1,14 @@
 import { useCallback, useMemo } from "react";
-import type { ErrorHook } from "@/components/error";
+import type { CatchOptions, ErrorHook } from "@/components/error";
 import { generateChallenge } from "@/components/otp";
-import { authorize_operation } from "@/core";
+import {
+  type AuthorizationRequest,
+  authorize_operation,
+  type DecryptionAuthorizationRequest,
+} from "@/core";
 import { useSession } from "./session.provider";
 
-export function useAuthorization(error: ErrorHook) {
+export function useAuthorizationParams(error: ErrorHook) {
   const { passkeys, user } = useSession();
 
   const allowed_credentials = useMemo(
@@ -12,24 +16,76 @@ export function useAuthorization(error: ErrorHook) {
     [passkeys],
   );
 
-  const authorize = useCallback(
-    async (operation: string) => {
-      const challenge_op = await error.catch(
+  const compileParams = useCallback(
+    async (operation: string, options?: CatchOptions) =>
+      error.catch(
         `Error generating ${operation} challenge`,
-        () => generateChallenge("PasskeyAuthorize", user.email),
-      );
-      if (!challenge_op.ok) {
-        return challenge_op;
+        () =>
+          generateChallenge("PasskeyAuthorize", user.email).then(
+            ({ challenge }) =>
+              ({
+                challenge,
+                allowed_credentials,
+              }) satisfies AuthorizationRequest,
+          ),
+        options,
+      ),
+    [user.email, allowed_credentials, error.catch],
+  );
+
+  return compileParams;
+}
+
+export function useDecryptionParams(error: ErrorHook) {
+  const { passkeys, user } = useSession();
+
+  const prf_configs = useMemo(
+    () =>
+      passkeys.map((pk) => ({
+        cred_id: pk.cred_id,
+        passkey_id: pk.cred_id,
+        user_id: user.id,
+      })),
+    [passkeys, user.id],
+  );
+
+  const compileParams = useCallback(
+    async (operation: string, options?: CatchOptions) =>
+      error.catch(
+        `Error generating ${operation} challenge`,
+        () =>
+          generateChallenge("PasskeyAuthorize", user.email).then(
+            ({ challenge }) =>
+              ({
+                challenge,
+                prf_configs,
+              }) satisfies DecryptionAuthorizationRequest,
+          ),
+        options,
+      ),
+    [user.email, prf_configs, error.catch],
+  );
+
+  return compileParams;
+}
+
+export function useAuthorization(error: ErrorHook) {
+  const compileParams = useAuthorizationParams(error);
+
+  const authorize = useCallback(
+    async (operation: string, options?: CatchOptions) => {
+      const params_op = await compileParams(operation);
+      if (!params_op.ok) {
+        return params_op;
       }
 
-      return await error.catch(`Error authorizing ${operation}`, () =>
-        authorize_operation({
-          challenge: challenge_op.result.challenge,
-          allowed_credentials,
-        }),
+      return await error.catch(
+        `Error authorizing ${operation}`,
+        () => authorize_operation(params_op.result),
+        options,
       );
     },
-    [user.email, allowed_credentials, error.catch],
+    [compileParams, error.catch],
   );
 
   return authorize;

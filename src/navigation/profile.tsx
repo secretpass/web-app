@@ -13,13 +13,13 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 import { type MouseEventHandler, useCallback } from "react";
-import type { SpassUser } from "@/api-types/SpassUser";
+import type { User } from "@/api-types/User";
 import { useLogoutMutation } from "@/auth/query";
 import { DropdownItem, useError } from "@/components";
 import { isCloud, isLocal } from "@/constants";
 import { COMMUNITY_LINKS, RESOURCES_LINKS } from "./links";
 
-export function UserProfileButton({ user }: { user: SpassUser }) {
+export function UserProfileButton({ user }: { user: User }) {
   const error = useError();
   const logout = useLogoutMutation();
   const logoutCallback: MouseEventHandler = useCallback(() => {

@@ -1,18 +1,16 @@
 import { toast } from "@heroui/react";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import * as uuid from "uuid";
 import * as z from "zod";
 import type { CreateProjectRequest } from "@/api-types/CreateProjectRequest";
 import type { EncryptionAlgorithm } from "@/api-types/EncryptionAlgorithm";
 import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
-import type { SpassProject } from "@/api-types/SpassProject";
-import { useSession } from "@/auth";
+import type { Project } from "@/api-types/Project";
 import { useAuthorization } from "@/auth/useAuthorization";
 import type { ErrorHook } from "@/components/error";
 import { SAFE_NAME_SCHEMA } from "@/constants";
-import { authorize_operation } from "@/core";
 import { resolveApiRequest } from "@/utils";
 import { PROJECT_LIST_QUERY_KEY } from "../queries";
 
@@ -91,7 +89,7 @@ export function useCreateProjectForm(path: string | null, error: ErrorHook) {
       }
 
       const create_op = await error.catch("Error creating project", () =>
-        resolveApiRequest<SpassProject>("/api/projects", {
+        resolveApiRequest<Project>("/api/projects", {
           method: "POST",
           body: JSON.stringify({
             path,

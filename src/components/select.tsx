@@ -4,7 +4,7 @@ import {
   Label,
   ListBox,
 } from "@heroui/react";
-import { type ReactNode, useMemo } from "react";
+import type { ReactNode } from "react";
 
 export interface SelectItem {
   value: string;

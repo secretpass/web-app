@@ -1,7 +1,7 @@
 import { Button, Description, IconPlus } from "@heroui/react";
 import { IconCode } from "@tabler/icons-react";
 import { Link, useParams } from "react-router";
-import type { SpassEnvironment } from "@/api-types/SpassEnvironment";
+import type { Environment } from "@/api-types/Environment";
 import { ProjectLayout } from "../ProjectLayout";
 import { useProjectQuery } from "../queries";
 
@@ -36,7 +36,7 @@ function EnvironmentItem({
   environment,
   project_id,
 }: {
-  environment: SpassEnvironment;
+  environment: Environment;
   project_id: string;
 }) {
   return (

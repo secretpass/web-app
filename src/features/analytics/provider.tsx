@@ -13,14 +13,6 @@ import {
   useState,
 } from "react";
 
-import { makeApiRequest } from "@/utils";
-
-interface AnalyticsOptions {
-  ui_host: string;
-  api_host: string;
-  project_token: string;
-}
-
 const AnalyticsContext = createContext<PostHog | null>(null);
 
 export function useAnalytics(): PostHog | null {

@@ -15,12 +15,15 @@ import * as z from "zod";
 import type { CreatePasskeyRequest } from "@/api-types/CreatePasskeyRequest";
 import type { CreatePasskeyResponse } from "@/api-types/CreatePasskeyResponse";
 import type { GenerateChallengeResponse } from "@/api-types/GenerateChallengeResponse";
-import type { PasskeyAuthorizationResponse } from "@/api-types/PasskeyAuthorizationResponse";
-import type { PasskeyCreationResponse } from "@/api-types/PasskeyCreationResponse";
+import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
 import { SESSION_QUERY_KEY, useSession } from "@/auth";
 import { ErrorDisplay, useError } from "@/components";
 import { ConfirmationCodeInput } from "@/components/otp";
-import { authorize_operation, create_passkey } from "@/core";
+import {
+  authorize_operation,
+  create_passkey,
+  type PasskeyCreationResult,
+} from "@/core";
 import { resolveApiRequest } from "@/utils";
 
 const createSchema = z.object({
@@ -32,7 +35,7 @@ type CreateForm = z.infer<typeof createSchema>;
 
 export function CreatePasskeyButton(props: ButtonProps) {
   const [create_response, setCreateResponse] = useState<{
-    create_response: PasskeyCreationResponse;
+    create_response: PasskeyCreationResult;
     challenge: string;
   } | null>(null);
   const error = useError();
@@ -60,7 +63,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
         challenge: challenge_result.result.challenge,
         email: user.email,
         user_id: user.id,
-        exclude_keys: passkeys.map((passkey) => passkey.id),
+        exclude_keys: passkeys.map((passkey) => passkey.cred_id),
         full_name: user.name,
       }),
     );
@@ -81,7 +84,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
       confirmation_code: "",
     } satisfies CreateForm,
     onSubmitMeta: {} as {
-      create_response: PasskeyCreationResponse;
+      create_response: PasskeyCreationResult;
       challenge: string;
     },
     onSubmit: async (data) => {
@@ -103,7 +106,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
           method: "POST",
           body: JSON.stringify({
             auth_response:
-              authorize_response.result as PasskeyAuthorizationResponse,
+              authorize_response.result as PasskeyAuthorizationResult,
             confirmation_code: data.value.confirmation_code,
             create_response: data.meta.create_response,
             name: data.value.passkey_name,

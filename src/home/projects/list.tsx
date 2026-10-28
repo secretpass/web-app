@@ -1,8 +1,8 @@
 import { IconFolder, IconShieldHalfFilled } from "@tabler/icons-react";
 import { Link } from "react-router";
+import type { Project } from "@/api-types/Project";
 import type { ProjectListItem } from "@/api-types/ProjectListItem";
 import type { ProjectPath } from "@/api-types/ProjectPath";
-import type { SpassProject } from "@/api-types/SpassProject";
 import { Alert, CommandDisplay } from "@/components";
 import { SectionHeader } from "@/components/sections/header";
 import { isCloud, isLocal } from "@/constants";
@@ -61,7 +61,7 @@ function ProjectCard({
   project,
   path,
 }: {
-  project: SpassProject;
+  project: Project;
   path: ProjectPath | null;
   inaccessible?: boolean;
 }) {

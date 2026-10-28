@@ -1,4 +1,4 @@
-import { Button, IconPlus, Input, InputGroup, Tooltip } from "@heroui/react";
+import { Button, IconPlus, InputGroup, Tooltip } from "@heroui/react";
 import { IconAlignLeft, IconCode, IconTrashFilled } from "@tabler/icons-react";
 import clsx from "clsx";
 import * as uuid from "uuid";

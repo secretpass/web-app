@@ -2,7 +2,7 @@ import { Breadcrumbs, Description } from "@heroui/react";
 import type { TablerIcon } from "@tabler/icons-react";
 import clsx from "clsx";
 import type { ReactNode } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 
 export interface SectionHeaderProps {
   className?: string;

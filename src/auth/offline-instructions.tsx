@@ -1,5 +1,4 @@
 import { Accordion, IconChevronDown } from "@heroui/react";
-import clsx from "clsx";
 import type { ReactNode } from "react";
 import { Alert, CommandDisplay } from "@/components";
 

@@ -13,7 +13,7 @@ export type UnsafeEvaluationResult<T> =
   | { ok: true; result: T }
   | { ok: false; error: unknown };
 
-interface CatchOptions {
+export interface CatchOptions {
   capture?: string;
   toast?: boolean;
 }
@@ -21,6 +21,12 @@ interface CatchOptions {
 export function useError() {
   const [value, setValue] = useState<ErrorValue | null>(null);
   const [is_pending, setIsPending] = useState<boolean>(false);
+
+  const reset = useCallback(() => {
+    setValue(null);
+    setIsPending(false);
+  }, []);
+
   const analytics = useAnalytics();
   const catch_error = useCallback(
     async <T,>(
@@ -74,6 +80,7 @@ export function useError() {
 
   return {
     value,
+    reset,
     is_pending,
     catch: catch_error,
   };
