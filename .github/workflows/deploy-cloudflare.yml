@@ -1,0 +1,59 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    tags:
+      - "**[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    defaults:
+      run:
+        working-directory: web-app
+    strategy:
+      matrix:
+        target: [local, cloud]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+        with:
+          path: web-app
+
+      - name: Checkout Core
+        uses: actions/checkout@v7
+        with:
+          path: core
+          ref: "${{ github.ref_name }}"
+          repository: secretpass/core
+          token: "${{ secrets.CORE_ACCESS_TOKEN }}"
+
+      - name: Setup rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v2
+
+      - name: Generate Core Modules
+        run: |
+          cd ../core
+          make web-${{ matrix.target }}
+          make export-api-types
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Build Vite App
+        run: make build-${{ matrix.target }}
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ matrix.target }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,7 @@ import { Dropdown } from "@heroui/react";
 import { IconExternalLink, type TablerIcon } from "@tabler/icons-react";
 import clsx from "clsx";
 import type { MouseEventHandler } from "react";
-import { useAnalytics } from "@/features/analytics/provider";
+import { useAnalytics } from "@/shared/analytics/provider";
 
 export interface DropdownItemProps {
   label: string;

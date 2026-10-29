@@ -1,7 +1,7 @@
 import { toast } from "@heroui/react";
 import clsx from "clsx";
 import { Activity, useCallback, useState } from "react";
-import { useAnalytics } from "@/features/analytics/provider";
+import { useAnalytics } from "@/shared/analytics/provider";
 import { Alert } from "./alert";
 
 export type ErrorValue = { title: string; content: string };

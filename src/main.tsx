@@ -6,9 +6,9 @@ import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router";
-import { ThemeProvider } from "@/features/theme";
+import { ThemeProvider } from "@/shared/theme/index.ts";
 import { App } from "./app.tsx";
-import { AnalyticsProvider } from "./features/analytics/provider";
+import { AnalyticsProvider } from "./shared/analytics/provider.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {

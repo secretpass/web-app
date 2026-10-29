@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
 import { useSessionQuery } from "@/auth";
 import { DropdownItem, type DropdownItemProps, Logo } from "@/components";
 import { isCloud, isLocal } from "@/constants";
-import { ThemeToggle } from "@/features/theme/theme-toggle";
+import { ThemeToggle } from "@/shared/theme/theme-toggle";
 import { COMMUNITY_LINKS, RESOURCES_LINKS } from "./links";
 import { UserProfileButton } from "./profile";
 

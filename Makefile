@@ -25,9 +25,12 @@ install:
 
 build-local:
 	echo "==> Build local UI"
+	VITE_API_BASE_URL=http://localhost:20206 \
+	VITE_OPERATION_MODE=Local \
 	bun run build
 
-
 build-cloud:
-	echo "==> Build local UI"
+	echo "==> Build cloud UI"
+	VITE_API_BASE_URL=https://api.secretpass.cloud \
+	VITE_OPERATION_MODE=Cloud \
 	bun run build

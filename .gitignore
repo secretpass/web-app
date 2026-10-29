@@ -29,3 +29,5 @@ src/core
 
 # Rust structs exported as typescript types
 src/api-types
+
+/**/.DS_Store
