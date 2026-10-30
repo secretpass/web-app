@@ -50,6 +50,8 @@ jobs:
 
       - name: Build Vite App
         run: make build-${{ matrix.target }}
+        env:
+          NODE_ENV: production
 
       - name: Publish to Cloudflare pages
         run: |
