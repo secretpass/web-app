@@ -23,7 +23,7 @@ export function ProjectsList({
             status="warning"
             className="rounded-2xl bg-background shadow-none"
           >
-            You don't have access to any projects at the moment,
+            You don't have access to any projects at the moment;
             {isLocal && (
               <>
                 please attach a project by running the command below in a
@@ -35,7 +35,8 @@ export function ProjectsList({
             )}
             {isCloud && (
               <>
-                Please create a new project or request your admin to invite you
+                {" "}
+                please create a new project or request your admin to invite you
                 to an existing project.
               </>
             )}

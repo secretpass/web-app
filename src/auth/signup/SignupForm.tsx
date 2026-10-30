@@ -24,6 +24,11 @@ export function SignupForm() {
     (state) => state.fieldMeta["profile.email"]?.isValid,
   );
 
+  const code_is_valid = useSelector(
+    form.store,
+    (state) => state.values.confirmation.confirmation_code?.length === 6,
+  );
+
   return (
     <form className="flex flex-col gap-6" onSubmit={onSubmit}>
       <form.Field name="profile.name">
@@ -129,7 +134,7 @@ export function SignupForm() {
         {started && (
           <Button
             aria-label="Complete Registration"
-            isDisabled={error.is_pending}
+            isDisabled={error.is_pending || !code_is_valid}
             size="lg"
             type="submit"
           >

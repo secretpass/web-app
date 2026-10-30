@@ -53,6 +53,17 @@ export function HomeDashboard() {
         </Alert>
       )}
 
+      {projects_list.isError && (
+        <Alert
+          status="warning"
+          title={`Error loading projects list`}
+          className="my-8 shadow-none"
+          action={<Button variant="ghost">Retry</Button>}
+        >
+          {projects_list.error.message}
+        </Alert>
+      )}
+
       <Shimmer className="h-32" active={projects_list.isPending}>
         {projects_list.isSuccess && (
           <ProjectsList projects={projects_list.data.projects} />

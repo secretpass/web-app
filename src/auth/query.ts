@@ -11,6 +11,7 @@ export function useSessionQuery() {
       resolveApiRequest<SessionPackage>("/api/auth/session", {
         signal: context.signal,
       }),
+    retryDelay: 200,
   });
 }
 
@@ -20,7 +21,8 @@ export function useLogoutMutation() {
     mutationFn: () =>
       resolveApiRequest("/api/auth/session", { method: "DELETE" }),
     onSettled: (_, __, ___, ____, context) => {
-      context.client.resetQueries({ queryKey: SESSION_QUERY_KEY });
+      // Invalidate all queries
+      context.client.resetQueries();
     },
   });
 }

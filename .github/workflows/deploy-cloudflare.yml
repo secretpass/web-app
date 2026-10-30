@@ -14,6 +14,8 @@ jobs:
     defaults:
       run:
         working-directory: web-app
+    env:
+      NODE_ENV: "production"
     strategy:
       matrix:
         target: [local, cloud]
@@ -35,11 +37,12 @@ jobs:
       - name: Setup rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v2
 
-      - name: Generate Core Modules
+      - name: Generate Core WASM Modules
         run: |
           cd ../core
-          make web-${{ matrix.target }}
-          make export-api-types
+          make wasm-add-target
+          make wasm-build-prod-${{ matrix.target }}
+          make api-export-types
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
