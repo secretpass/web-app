@@ -14,8 +14,6 @@ jobs:
     defaults:
       run:
         working-directory: web-app
-    env:
-      NODE_ENV: "production"
     strategy:
       matrix:
         target: [local, cloud]
