@@ -51,10 +51,8 @@ jobs:
       - name: Build Vite App
         run: make build-${{ matrix.target }}
 
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy dist --latest --name=${{ matrix.target }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to Cloudflare pages
+        run: bunx wrangler deploy dist --latest --name=${{ matrix.target }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
