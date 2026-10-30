@@ -53,7 +53,7 @@ jobs:
 
       - name: Publish to Cloudflare pages
         run: |
-          bunx wrangler deploy index.js --static=dist \
+          bunx wrangler deploy index.js --assets=dist \
             --latest --name=${{ matrix.target }} --tag=${{ github.ref_name }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
