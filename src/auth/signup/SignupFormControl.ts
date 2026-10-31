@@ -104,7 +104,6 @@ export function useSignupForm(error: ErrorHook) {
         return;
       }
 
-      const passkey_id = uuid.v7();
       const create_result: PasskeyCreationResult = JSON.parse(
         passkey.create_result,
       );
@@ -116,7 +115,6 @@ export function useSignupForm(error: ErrorHook) {
             challenge: passkey.challenge,
             prf_configs: [
               {
-                passkey_id,
                 user_id: profile.id,
                 cred_id: create_result.id,
               },
@@ -138,7 +136,6 @@ export function useSignupForm(error: ErrorHook) {
               id: profile.id,
               email: profile.email,
               name: profile.name,
-              passkey_id,
               passkey_name: confirmation.passkey_name,
               confirmation_code: confirmation.confirmation_code,
               passkey_result: create_result,
