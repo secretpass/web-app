@@ -85,7 +85,10 @@ export function useSignupForm(error: ErrorHook) {
         // Intentionally allow temporary failure allowing the user to resend the challenge
         await error.catch(
           "Temporary error sending email code",
-          () => generateChallenge("EmailSignup", profile.email),
+          () =>
+            generateChallenge("EmailSignup", profile.email, {
+              name: profile.name,
+            }),
           {
             toast: true,
             capture: "signup_send_email_challenge",

@@ -18,12 +18,18 @@ import { ErrorDisplay, useError } from "./error";
 
 const CODE_PATTERN = /[^ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/g;
 
-export async function generateChallenge(kind: ChallengeKind, owner: string) {
+export async function generateChallenge(
+  kind: ChallengeKind,
+  owner: string,
+  options?: { name?: string; operation?: string },
+) {
   return resolveApiRequest<GenerateChallengeResponse>("/api/auth/challenge", {
     method: "POST",
     body: JSON.stringify({
       kind,
       owner,
+      name: options?.name,
+      operation: options?.operation,
     } satisfies GenerateChallengeRequest),
   });
 }
