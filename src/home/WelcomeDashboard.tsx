@@ -1,20 +1,18 @@
 import { Button, IconPlus, Separator } from "@heroui/react";
 import { IconRefresh } from "@tabler/icons-react";
 import { Link } from "react-router";
-import { useSession } from "@/auth";
 import { Alert } from "@/components";
 import { PageHeader } from "@/components/sections/header";
 import { Shimmer } from "@/components/shimmer";
-import { isCloud, isLocal, OPERATION_MODE } from "@/constants";
+import { isCloud, isLocal } from "@/constants";
 import { useProjectsListQuery } from "@/projects";
-import { CreatePasskeyButton } from "@/user/CreatePasskey";
 import { HelpTopicList } from "./help";
+import { PasskeysList } from "./PasskeysList";
 import { ProjectsList } from "./projects/list";
 import { PendingProjectsList } from "./projects/pending";
 
 export function HomeDashboard() {
   const projects_list = useProjectsListQuery();
-  const session = useSession();
 
   return (
     <div className="content mx-auto container">
@@ -27,31 +25,7 @@ export function HomeDashboard() {
         >
           <IconRefresh className="size-6" />
         </Button>
-        {isCloud && (
-          <Link to="/new">
-            <Button variant="primary">
-              <IconPlus />
-              Create Project
-            </Button>
-          </Link>
-        )}
       </PageHeader>
-
-      {session.passkeys.length === 0 && (
-        <Alert
-          status="warning"
-          title={`${OPERATION_MODE} passkey missing`}
-          className="my-8 shadow-none"
-          action={
-            <CreatePasskeyButton variant="ghost">
-              Create Passkey
-            </CreatePasskeyButton>
-          }
-        >
-          You don't have a passkey setup, you won't be able to access secrets
-          without a passkey.
-        </Alert>
-      )}
 
       {projects_list.isError && (
         <Alert
@@ -77,6 +51,10 @@ export function HomeDashboard() {
           )}
         </Shimmer>
       )}
+
+      <Shimmer className="h-32" active={projects_list.isPending}>
+        <PasskeysList />
+      </Shimmer>
 
       {!projects_list.isPending && isLocal && (
         <div>

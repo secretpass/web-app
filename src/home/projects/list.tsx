@@ -1,3 +1,4 @@
+import { Button, IconPlus } from "@heroui/react";
 import { IconFolder, IconShieldHalfFilled } from "@tabler/icons-react";
 import { Link } from "react-router";
 import type { Project } from "@/api-types/Project";
@@ -16,7 +17,16 @@ export function ProjectsList({
 }) {
   return (
     <div>
-      <SectionHeader title="Your projects" />
+      <SectionHeader title="Your projects">
+        {isCloud && (
+          <Link to="/new">
+            <Button variant={projects.length === 0 ? "primary" : "ghost"}>
+              <IconPlus />
+              Create a new project
+            </Button>
+          </Link>
+        )}
+      </SectionHeader>
       <div className="bg-surface px-4 py-6 rounded-xl">
         {projects.length === 0 && (
           <Alert
