@@ -1,11 +1,4 @@
-import {
-  Button,
-  Description,
-  InputGroup,
-  Label,
-  TextArea,
-  TextField,
-} from "@heroui/react";
+import { Button, InputGroup } from "@heroui/react";
 import {
   IconAlignLeft,
   IconCircleCheck,
@@ -19,20 +12,25 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import type { SecretWithEncryptedValues } from "@/api-types/SecretWithEncryptedValues";
 import { useDecryptionParams } from "@/auth/useAuthorization";
 import { useError } from "@/components";
-import { decrypt_secret } from "@/core";
+import {
+  type ContributorPublicKey,
+  type ContributorSecretValue,
+  type DecryptedSecret,
+  decrypt_secrets,
+} from "@/core";
 import { useVisibleAction } from "@/hooks";
-
-export interface SecretItemProps extends SecretWithEncryptedValues {
-  tag: string;
-}
 
 export function SecretItem({
   definition,
   contributor_values,
-  tag,
-}: SecretItemProps) {
+}: SecretWithEncryptedValues) {
   const error = useError();
-  const [plain_value, setPlainValue] = useState<string | undefined>(undefined);
+  const [tag_values, setTagValues] = useState<DecryptedSecret[] | undefined>(
+    undefined,
+  );
+  const [latest_value, setLatestValue] = useState<string | undefined>(
+    undefined,
+  );
   const [updated_value, setUpdatedValue] = useState<string | undefined>(
     undefined,
   );
@@ -41,15 +39,10 @@ export function SecretItem({
   );
 
   const locked = useMemo(
-    () => typeof plain_value === "undefined",
-    [plain_value],
+    () => typeof latest_value === "undefined",
+    [latest_value],
   );
   const get_params = useDecryptionParams(error);
-
-  const tag_values = useMemo(
-    () => contributor_values.filter((value) => value.tag === tag),
-    [contributor_values, tag],
-  );
 
   const unLock = useCallback(async () => {
     const params_op = await get_params("secret decryption", { toast: true });
@@ -60,12 +53,12 @@ export function SecretItem({
     const decryption_op = await error.catch(
       "Error decrypting secret",
       () =>
-        decrypt_secret({
+        decrypt_secrets({
           auth_request: params_op.result,
-          encrypted_secrets: tag_values.map((value) => [
-            value.cred_id,
-            value.value,
-          ]),
+          encrypted_secrets: contributor_values as [
+            ContributorPublicKey,
+            ContributorSecretValue,
+          ][],
         }),
       { toast: true },
     );
@@ -74,11 +67,18 @@ export function SecretItem({
       return;
     }
 
-    setPlainValue(decryption_op.result);
-  }, [get_params, error.catch, tag_values]);
+    const decrypted_secrets = decryption_op.result.decrypted_secrets;
+
+    setLatestValue(
+      decrypted_secrets.find((secret) => secret.tag === "latest")
+        ?.plain_value ?? "",
+    );
+    setTagValues(decrypted_secrets.filter((secret) => secret.tag !== "latest"));
+  }, [get_params, error.catch, contributor_values]);
 
   const reset = useCallback(() => {
-    setPlainValue(undefined);
+    setTagValues(undefined);
+    setLatestValue(undefined);
     setUpdatedValue(undefined);
     setUpdatedComments(undefined);
     error.reset();
@@ -119,7 +119,7 @@ export function SecretItem({
             <InputGroup.TextArea
               disabled={locked}
               placeholder={locked ? "--ENCRYPTED-SECRET--" : "SECRET VALUE..."}
-              value={updated_value ?? plain_value ?? ""}
+              value={updated_value ?? latest_value ?? ""}
               onChange={(evt) => setUpdatedValue(evt.currentTarget.value)}
               className="field-sizing-content resize-none max-h-16 font-mono"
             />
@@ -128,7 +128,7 @@ export function SecretItem({
                 className={clsx(
                   "h-auto",
                   typeof updated_value === "undefined" && "hidden",
-                  updated_value === plain_value && "hidden",
+                  updated_value === latest_value && "hidden",
                 )}
                 size="sm"
                 variant="secondary"

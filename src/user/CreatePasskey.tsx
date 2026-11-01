@@ -18,7 +18,7 @@ import type { GenerateChallengeResponse } from "@/api-types/GenerateChallengeRes
 import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
 import { SESSION_QUERY_KEY, useSession } from "@/auth";
 import { ErrorDisplay, useError } from "@/components";
-import { ConfirmationCodeInput } from "@/components/otp";
+import { ConfirmationCodeInput, generateChallenge } from "@/components/otp";
 import {
   authorize_operation,
   create_passkey,
@@ -44,23 +44,17 @@ export function CreatePasskeyButton(props: ButtonProps) {
   const queryClient = useQueryClient();
 
   const createPasskey = useCallback(async () => {
-    const challenge_result = await error.catch(
+    const passkey_challenge_op = await error.catch(
       "Error starting passkey creation",
-      () =>
-        resolveApiRequest<GenerateChallengeResponse>(
-          "/api/users/passkeys/create/start",
-          {
-            method: "POST",
-          },
-        ),
+      () => generateChallenge("PasskeyCreate", user.email),
     );
-    if (!challenge_result.ok) {
+    if (!passkey_challenge_op.ok) {
       return;
     }
 
     const create_result = await error.catch("Error creating passkey", () =>
       create_passkey({
-        challenge: challenge_result.result.challenge,
+        challenge: passkey_challenge_op.result.challenge,
         email: user.email,
         user_id: user.id,
         exclude_keys: passkeys.map((passkey) => passkey.cred_id),
@@ -72,9 +66,16 @@ export function CreatePasskeyButton(props: ButtonProps) {
       return;
     }
 
+    // Ignore this result allowing the user to retry
+    await error.catch("Error sending email challenge", () =>
+      generateChallenge("EmailAuthorize", user.email, {
+        operation: "attempted to create a new passkey",
+      }),
+    );
+
     setCreateResponse({
       create_response: create_result.result,
-      challenge: challenge_result.result.challenge,
+      challenge: passkey_challenge_op.result.challenge,
     });
   }, [error.catch, user, passkeys]);
 
@@ -203,6 +204,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
                           kind="EmailAuthorize"
                           onConfirmation={field.handleChange}
                           owner={user.email}
+                          operation="attempted to create a new passkey"
                         />
                       )}
                     </form.Field>

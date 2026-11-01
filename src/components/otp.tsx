@@ -45,6 +45,7 @@ export function ConfirmationCodeInput({
   kind: ChallengeKind;
   owner: string;
   onConfirmation: (final_value: string) => void;
+  operation?: string;
 }) {
   const error = useError();
   const [send_count, setSendCount] = useState(0);

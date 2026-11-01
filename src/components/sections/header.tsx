@@ -49,7 +49,9 @@ export function SectionHeader({
       )}
     >
       <div className="flex flex-col">
-        <h3 className="text-2xl font-light pt-4">{title}</h3>
+        <h3 className="text-2xl font-light pt-4 flex items-center gap-2">
+          {title}
+        </h3>
         {description && <Description>{description}</Description>}
       </div>
       <div className="grow" />

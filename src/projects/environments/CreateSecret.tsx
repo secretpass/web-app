@@ -65,6 +65,9 @@ export function CreateSecretDialog({
           contributors_keys,
           machines_keys,
           secret_value: value.value,
+          env_name,
+          tag_name: "latest",
+          name: value.name,
         }),
       );
       if (!encrypt_op.ok) {
@@ -73,7 +76,7 @@ export function CreateSecretDialog({
 
       const create_op = await error.catch("Error creating secret", () =>
         resolveApiRequest(
-          `/api/projects/${project_id}/env/${env_name}/secret`,
+          `/api/projects/${project_id}/env/${env_name}/secrets`,
           {
             method: "POST",
             body: JSON.stringify({

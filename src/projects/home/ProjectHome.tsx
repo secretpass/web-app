@@ -1,9 +1,10 @@
-import { Button, Description, IconPlus } from "@heroui/react";
-import { IconCode } from "@tabler/icons-react";
-import { Link, useParams } from "react-router";
-import type { Environment } from "@/api-types/Environment";
+import { Button, IconPlus } from "@heroui/react";
+import { IconBotId, IconUsers } from "@tabler/icons-react";
+import { useParams } from "react-router";
+import { SectionHeader } from "@/components/sections/header";
 import { ProjectLayout } from "../ProjectLayout";
 import { useProjectQuery } from "../queries";
+import { EnvironmentItem } from "./environment";
 
 export function ProjectHome() {
   const { project_id } = useParams<{ project_id: string }>();
@@ -28,32 +29,30 @@ export function ProjectHome() {
           />
         ))}
       </div>
-    </ProjectLayout>
-  );
-}
 
-function EnvironmentItem({
-  environment,
-  project_id,
-}: {
-  environment: Environment;
-  project_id: string;
-}) {
-  return (
-    <Link
-      to={`/p/${project_id}/env/${environment.name}`}
-      className="bg-background hover:bg-background-secondary p-4 flex gap-4 items-start rounded-xl"
-    >
-      <IconCode className="h-6 w-auto text-muted" />
-      <div className="flex flex-col grow gap-1">
-        <pre className="font-mono text-lg">{environment.name}</pre>
-        {environment.description && (
-          <Description>{environment.description}</Description>
-        )}
-        <div className="text-xs text-muted text-right">
-          {environment.created_at}
-        </div>
-      </div>
-    </Link>
+      <SectionHeader
+        title={
+          <>
+            <IconUsers className="size-6" /> Users
+          </>
+        }
+      >
+        <Button variant="ghost">
+          <IconPlus /> Add User
+        </Button>
+      </SectionHeader>
+
+      <SectionHeader
+        title={
+          <>
+            <IconBotId className="size-6" /> Machines
+          </>
+        }
+      >
+        <Button variant="ghost">
+          <IconPlus /> Generate Key
+        </Button>
+      </SectionHeader>
+    </ProjectLayout>
   );
 }
