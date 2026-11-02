@@ -4,7 +4,8 @@ import { Link } from "react-router";
 import type { Project } from "@/api-types/Project";
 import type { ProjectListItem } from "@/api-types/ProjectListItem";
 import type { ProjectPath } from "@/api-types/ProjectPath";
-import { Alert, CommandDisplay } from "@/components";
+import { Alert } from "@/components";
+import { SimpleMono } from "@/components/command";
 import { SectionHeader } from "@/components/sections/header";
 import { isCloud, isLocal } from "@/constants";
 
@@ -36,11 +37,9 @@ export function ProjectsList({
             You don't have access to any projects at the moment;
             {isLocal && (
               <>
-                please attach a project by running the command below in a
-                project directory
-                <CommandDisplay className="mt-4 rounded w-full">
-                  spass attach
-                </CommandDisplay>
+                please attach a project by running{" "}
+                <SimpleMono value="spass local attach" /> in the desired project
+                directory
               </>
             )}
             {isCloud && (

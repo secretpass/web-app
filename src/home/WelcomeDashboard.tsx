@@ -16,7 +16,6 @@ export function HomeDashboard() {
 
   return (
     <div className="content mx-auto container">
-      <RunnerDialog />
       <PageHeader title="Home">
         <Button
           isIconOnly
@@ -58,8 +57,8 @@ export function HomeDashboard() {
       </Shimmer>
 
       {!projects_list.isPending && isLocal && (
-        <div>
-          <div className="flex gap-8 my-8 items-center">
+        <div className="my-8">
+          <div className="flex gap-8 mb-6 items-center">
             <Separator className="flex-1" />
             <div className="text-muted">Missing something?</div>
             <Separator className="flex-1" />
@@ -68,6 +67,8 @@ export function HomeDashboard() {
           <HelpTopicList />
         </div>
       )}
+
+      <RunnerDialog />
     </div>
   );
 }

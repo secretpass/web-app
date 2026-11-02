@@ -1,15 +1,16 @@
 import { Button, IconPlus } from "@heroui/react";
-import { IconBotId, IconUsers } from "@tabler/icons-react";
+import { IconUsers } from "@tabler/icons-react";
 import { useParams } from "react-router";
 import { SectionHeader } from "@/components/sections/header";
+import { Shimmer } from "@/components/shimmer";
+import { MachinePublicKeysList } from "../machines/MachinesList";
 import { ProjectLayout } from "../ProjectLayout";
 import { useProjectQuery } from "../queries";
-import { CreateMachineKeyDialog } from "./CreateMachineKey";
 import { EnvironmentItem } from "./environment";
 
 export function ProjectHome() {
   const { project_id } = useParams<{ project_id: string }>();
-  const { data } = useProjectQuery(project_id || "");
+  const { data, isPending, isError } = useProjectQuery(project_id || "");
 
   return (
     <ProjectLayout
@@ -43,15 +44,12 @@ export function ProjectHome() {
         </Button>
       </SectionHeader>
 
-      <SectionHeader
-        title={
-          <>
-            <IconBotId className="size-6" /> Machines
-          </>
-        }
-      >
-        <CreateMachineKeyDialog project_id={project_id ?? ""} />
-      </SectionHeader>
+      <Shimmer active={isPending} hidden={isError}>
+        <MachinePublicKeysList
+          public_keys={data?.machines ?? []}
+          project_id={project_id ?? ""}
+        />
+      </Shimmer>
     </ProjectLayout>
   );
 }

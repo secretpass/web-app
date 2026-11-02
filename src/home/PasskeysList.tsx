@@ -1,11 +1,16 @@
-import { Alert, Button, IconPlus, toast } from "@heroui/react";
-import { IconLockAccess } from "@tabler/icons-react";
+import { Button, IconPlus, toast } from "@heroui/react";
+import {
+  IconCloud,
+  IconDeviceLaptop,
+  IconLockAccess,
+} from "@tabler/icons-react";
+import clsx from "clsx";
 import { useCallback } from "react";
 import TimeAgo from "react-timeago";
 import type { Passkey } from "@/api-types/Passkey";
 import type { User } from "@/api-types/User";
 import { useSession } from "@/auth";
-import { useError } from "@/components";
+import { Alert, useError } from "@/components";
 import { generateChallenge } from "@/components/otp";
 import { SectionHeader } from "@/components/sections/header";
 import { OPERATION_MODE } from "@/constants";
@@ -14,12 +19,15 @@ import { CreatePasskeyButton } from "@/user/CreatePasskey";
 
 export function PasskeysList() {
   const session = useSession();
+  const environment_passkeys = session.passkeys.filter(
+    (passkey) => passkey.type === OPERATION_MODE,
+  );
 
   return (
-    <div className="content mx-auto container">
+    <div>
       <SectionHeader title="Your Passkeys">
         <CreatePasskeyButton
-          variant={session.passkeys.length === 0 ? "primary" : "ghost"}
+          variant={environment_passkeys.length === 0 ? "primary" : "ghost"}
         >
           <IconPlus />
           Add a new passkey
@@ -27,14 +35,17 @@ export function PasskeysList() {
       </SectionHeader>
 
       <div className="bg-surface px-4 py-6 rounded-xl">
-        {session.passkeys.length === 0 && (
+        {environment_passkeys.length === 0 && (
           <Alert
             status="warning"
             title={`${OPERATION_MODE} passkey missing`}
-            className="my-8 shadow-none"
+            className="my-8 shadow-none bg-background"
           >
-            You don't have a passkey setup, you won't be able to access secrets
-            without a passkey.
+            <p>
+              You don't have a {OPERATION_MODE.toLowerCase()} passkey setup, you
+              won't be able to access secrets without a passkey. Click add a new
+              passkey to setup.
+            </p>
           </Alert>
         )}
 
@@ -57,7 +68,7 @@ function PasskeyItem({ passkey, user }: { passkey: Passkey; user: User }) {
   const onVerify = useCallback(async () => {
     const challenge_op = await error.catch(
       "Error creating challenge",
-      () => generateChallenge("EmailAuthorize", user.email),
+      () => generateChallenge("PasskeyAuthorize", user.email),
       { toast: true },
     );
 
@@ -84,20 +95,47 @@ function PasskeyItem({ passkey, user }: { passkey: Passkey; user: User }) {
 
   return (
     <div className="group bg-background hover:bg-background-secondary p-4 rounded-xl flex gap-4 items-start">
-      <IconLockAccess className="size-6" />
+      <IconLockAccess
+        className={clsx(
+          "size-6",
+          passkey.type === OPERATION_MODE ? "" : "text-muted",
+        )}
+      />
       <div className="flex flex-col gap-2 grow">
-        <div className="font-semibold flex justify-between h-6 items-start">
-          {passkey.name}
-          <Button
-            className="hidden group-hover:flex h-auto"
-            size="sm"
-            variant="outline"
-            onClick={onVerify}
+        <div className="flex justify-between h-6 items-start">
+          <div
+            className={clsx(
+              "grow",
+              passkey.type === OPERATION_MODE ? "font-semibold" : "text-muted",
+            )}
           >
-            Check
-          </Button>
+            {passkey.name}
+          </div>
+          {passkey.type === OPERATION_MODE && (
+            <Button
+              className="hidden group-hover:flex h-auto"
+              size="sm"
+              variant="outline"
+              onClick={onVerify}
+            >
+              Check
+            </Button>
+          )}
+
+          {passkey.type === "Cloud" && (
+            <IconCloud className="size-4 text-muted" />
+          )}
+          {passkey.type === "Local" && (
+            <IconDeviceLaptop className="size-4 text-muted" />
+          )}
         </div>
-        <div className="text-muted flex justify-end text-sm">
+        <div className="text-muted flex gap-2 text-sm">
+          {passkey.type !== OPERATION_MODE && (
+            <div className="text-sm text-muted font-light hidden group-hover:flex h-auto">
+              {passkey.type} only
+            </div>
+          )}
+          <div className="grow" />
           <TimeAgo date={passkey.created_at} />
         </div>
       </div>

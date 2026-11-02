@@ -1,6 +1,6 @@
 import { Accordion, IconChevronDown } from "@heroui/react";
 import type { ReactNode } from "react";
-import { CommandDisplay } from "@/components";
+import { SimpleMono } from "@/components/command";
 
 interface HelpTopicItem {
   title: string;
@@ -12,9 +12,9 @@ const HELP_TOPICS: HelpTopicItem[] = [
     title: "Can't see your project?",
     details: (
       <div>
-        Please navigate to the project folder and run
-        <CommandDisplay subtle>spass attach</CommandDisplay>. This will give
-        secretpass visibility into the project directory.
+        Please navigate to the project folder and run{" "}
+        <SimpleMono value="spass local attach" />. This will give secretpass
+        visibility into the project directory.
       </div>
     ),
   },
@@ -22,10 +22,9 @@ const HELP_TOPICS: HelpTopicItem[] = [
     title: "Want to setup a new project?",
     details: (
       <div>
-        Please navigate to the target folder and run
-        <CommandDisplay subtle>spass attach</CommandDisplay>. The project will
-        appear under pending projects and you can proceed to complete the set
-        up.
+        Please navigate to the target folder and run{" "}
+        <SimpleMono value="spass local attach" />. The project will appear under
+        pending projects and you can proceed to complete the set up.
       </div>
     ),
   },
@@ -43,7 +42,7 @@ const HELP_TOPICS: HelpTopicItem[] = [
 
 export function HelpTopicList() {
   return (
-    <Accordion variant="surface" className="w-full max-w-lg mx-auto">
+    <Accordion variant="surface" className="w-full max-w-lg mx-auto ">
       {HELP_TOPICS.map((topic) => (
         <Accordion.Item key={topic.title}>
           <Accordion.Heading>

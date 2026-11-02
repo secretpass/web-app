@@ -9,18 +9,13 @@ import {
   TextField,
 } from "@heroui/react";
 import { IconFingerprint } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import type { CreateMachinePublicKeyRequest } from "@/api-types/CreateMachinePublicKeyRequest";
 import type { GetEnvironmentResult } from "@/api-types/GetEnvironmentResult";
 import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
 import { useDecryptionParams } from "@/auth/useAuthorization";
-import {
-  Alert,
-  CommandDisplay,
-  ErrorDisplay,
-  Select,
-  useError,
-} from "@/components";
+import { Alert, ErrorDisplay, Select, useError } from "@/components";
 import { SimpleMono } from "@/components/command";
 import { OPERATION_MODE } from "@/constants";
 import {
@@ -37,6 +32,7 @@ export interface CreateMachineKeyProps {
 
 export function CreateMachineKeyDialog({ project_id }: CreateMachineKeyProps) {
   const error = useError();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [private_key, setPrivateKey] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -118,6 +114,8 @@ export function CreateMachineKeyDialog({ project_id }: CreateMachineKeyProps) {
       return;
     }
 
+    queryClient.invalidateQueries({ queryKey: ["project", project_id] });
+
     setPrivateKey(generate_op.result.private_key);
   }, [
     get_params,
@@ -127,6 +125,7 @@ export function CreateMachineKeyDialog({ project_id }: CreateMachineKeyProps) {
     project_id,
     description,
     name,
+    queryClient.invalidateQueries,
   ]);
 
   return (

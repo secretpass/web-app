@@ -14,13 +14,13 @@ import { type SubmitEventHandler, useCallback, useState } from "react";
 import * as z from "zod";
 import type { CreatePasskeyRequest } from "@/api-types/CreatePasskeyRequest";
 import type { CreatePasskeyResponse } from "@/api-types/CreatePasskeyResponse";
-import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
+import type { PublicKeyGenerateResult } from "@/api-types/PublicKeyGenerateResult";
 import { SESSION_QUERY_KEY, useSession } from "@/auth";
 import { ErrorDisplay, useError } from "@/components";
 import { ConfirmationCodeInput, generateChallenge } from "@/components/otp";
 import {
-  authorize_operation,
   create_passkey,
+  generate_public_keys,
   type PasskeyCreationResult,
 } from "@/core";
 import { resolveApiRequest } from "@/utils";
@@ -65,12 +65,14 @@ export function CreatePasskeyButton(props: ButtonProps) {
       return;
     }
 
+    console.log("Sending an email challenge");
     // Ignore this result allowing the user to retry
-    await error.catch("Error sending email challenge", () =>
+    const email_op = await error.catch("Error sending email challenge", () =>
       generateChallenge("EmailAuthorize", user.email, {
         operation: "attempted to create a new passkey",
       }),
     );
+    console.log("Email challenge result", email_op);
 
     setCreateResponse({
       create_response: create_result.result,
@@ -88,16 +90,21 @@ export function CreatePasskeyButton(props: ButtonProps) {
       challenge: string;
     },
     onSubmit: async (data) => {
-      const authorize_response = await error.catch(
+      const pubkey_op = await error.catch(
         "Error authorizing save passkey",
         () =>
-          authorize_operation({
-            allowed_credentials: [data.meta.create_response.id],
+          generate_public_keys({
+            prf_configs: [
+              {
+                user_id: user.id,
+                cred_id: data.meta.create_response.id,
+              },
+            ],
             challenge: data.meta.challenge,
           }),
       );
 
-      if (!authorize_response.ok) {
+      if (!pubkey_op.ok) {
         return;
       }
 
@@ -105,11 +112,10 @@ export function CreatePasskeyButton(props: ButtonProps) {
         resolveApiRequest<CreatePasskeyResponse>("/api/users/passkeys/create", {
           method: "POST",
           body: JSON.stringify({
-            auth_response:
-              authorize_response.result as PasskeyAuthorizationResult,
             confirmation_code: data.value.confirmation_code,
             create_response: data.meta.create_response,
             name: data.value.passkey_name,
+            public_key_result: pubkey_op.result as PublicKeyGenerateResult,
           } satisfies CreatePasskeyRequest),
         }),
       );
@@ -161,7 +167,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
       <Button {...props} onClick={createPasskey}></Button>
       <Modal.Backdrop>
         <Modal.Container>
-          <Modal.Dialog>
+          <Modal.Dialog className="w-full max-w-xl">
             <Modal.CloseTrigger />
             <Modal.Header className="flex-row items-center">
               <Modal.Icon>
@@ -177,7 +183,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
                   {create_response !== null && (
                     <form.Field name="passkey_name">
                       {(field) => (
-                        <TextField isRequired>
+                        <TextField isRequired variant="secondary">
                           <Label>Passkey Name</Label>
                           <Input
                             type="text"

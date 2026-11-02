@@ -25,7 +25,7 @@ export function SecretItem({
   contributor_values,
 }: SecretWithEncryptedValues) {
   const error = useError();
-  const [tag_values, setTagValues] = useState<DecryptedSecret[] | undefined>(
+  const [_tag_values, setTagValues] = useState<DecryptedSecret[] | undefined>(
     undefined,
   );
   const [latest_value, setLatestValue] = useState<string | undefined>(
