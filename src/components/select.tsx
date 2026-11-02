@@ -21,6 +21,8 @@ export interface SelectProps<T extends string | string[]> {
   items: SelectItem[];
   className?: string;
   disabled?: boolean;
+  required?: boolean;
+  placeholder?: string;
 }
 
 export function Select<T extends string | string[]>({
@@ -33,15 +35,19 @@ export function Select<T extends string | string[]>({
   items,
   description,
   variant,
+  required,
+  placeholder,
 }: SelectProps<T>) {
   return (
     <HeroSelect
+      isRequired={required}
       variant={variant}
       value={value}
       className={className}
       isDisabled={disabled}
       selectionMode={multiselect ? "multiple" : "single"}
       onChange={onChange ? (value) => onChange(value as T) : undefined}
+      placeholder={placeholder}
     >
       <Label>{label}</Label>
       <HeroSelect.Trigger>

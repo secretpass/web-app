@@ -24,3 +24,17 @@ export function CommandDisplay({
     </pre>
   );
 }
+
+export function SimpleMono({
+  value,
+  className,
+}: {
+  value: string;
+  className?: string;
+}) {
+  return (
+    <span className={clsx("font-mono text-yellow-700", className)}>
+      {value}
+    </span>
+  );
+}

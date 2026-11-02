@@ -14,7 +14,6 @@ import { type SubmitEventHandler, useCallback, useState } from "react";
 import * as z from "zod";
 import type { CreatePasskeyRequest } from "@/api-types/CreatePasskeyRequest";
 import type { CreatePasskeyResponse } from "@/api-types/CreatePasskeyResponse";
-import type { GenerateChallengeResponse } from "@/api-types/GenerateChallengeResponse";
 import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
 import { SESSION_QUERY_KEY, useSession } from "@/auth";
 import { ErrorDisplay, useError } from "@/components";
@@ -164,7 +163,7 @@ export function CreatePasskeyButton(props: ButtonProps) {
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
-            <Modal.Header>
+            <Modal.Header className="flex-row items-center">
               <Modal.Icon>
                 {!success && <IconFingerprint className="size-6" />}
                 {success && <IconCircleCheck className="size-6 text-success" />}

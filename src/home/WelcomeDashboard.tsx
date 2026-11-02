@@ -1,21 +1,22 @@
-import { Button, IconPlus, Separator } from "@heroui/react";
+import { Button, Separator } from "@heroui/react";
 import { IconRefresh } from "@tabler/icons-react";
-import { Link } from "react-router";
 import { Alert } from "@/components";
 import { PageHeader } from "@/components/sections/header";
 import { Shimmer } from "@/components/shimmer";
-import { isCloud, isLocal } from "@/constants";
+import { isLocal } from "@/constants";
 import { useProjectsListQuery } from "@/projects";
 import { HelpTopicList } from "./help";
 import { PasskeysList } from "./PasskeysList";
 import { ProjectsList } from "./projects/list";
 import { PendingProjectsList } from "./projects/pending";
+import { RunnerDialog } from "./run";
 
 export function HomeDashboard() {
   const projects_list = useProjectsListQuery();
 
   return (
     <div className="content mx-auto container">
+      <RunnerDialog />
       <PageHeader title="Home">
         <Button
           isIconOnly

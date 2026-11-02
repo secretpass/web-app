@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import type { EncryptedContributorValue } from "@/api-types/EncryptedContributorValue";
 import type { CatchOptions, ErrorHook } from "@/components/error";
 import { generateChallenge } from "@/components/otp";
 import {

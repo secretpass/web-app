@@ -15,12 +15,13 @@ export function useProjectsListQuery() {
   });
 }
 
-export function useProjectQuery(project_id: string) {
+export function useProjectQuery(project_id?: string) {
   return useQuery({
     queryKey: ["project", project_id],
     queryFn: (context) =>
       resolveApiRequest<GetProjectResult>(`/api/projects/${project_id}`, {
         signal: context.signal,
       }),
+    enabled: typeof project_id === "string",
   });
 }
