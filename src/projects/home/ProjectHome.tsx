@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import { SectionHeader } from "@/components/sections/header";
 import { ProjectLayout } from "../ProjectLayout";
 import { useProjectQuery } from "../queries";
+import { CreateMachineKeyDialog } from "./CreateMachineKey";
 import { EnvironmentItem } from "./environment";
 
 export function ProjectHome() {
@@ -49,9 +50,7 @@ export function ProjectHome() {
           </>
         }
       >
-        <Button variant="ghost">
-          <IconPlus /> Generate Key
-        </Button>
+        <CreateMachineKeyDialog project_id={project_id ?? ""} />
       </SectionHeader>
     </ProjectLayout>
   );

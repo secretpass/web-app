@@ -16,6 +16,7 @@ import type { CreateSecretRequest } from "@/api-types/CreateSecretRequest";
 import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
 import { useAuthorizationParams } from "@/auth/useAuthorization";
 import { ErrorDisplay, useError } from "@/components";
+import { SimpleMono } from "@/components/command";
 import { SAFE_NAME_SCHEMA } from "@/constants";
 import type { ContributorPublicKey, MachinePublicKey } from "@/core";
 import { encrypt_secret } from "@/core";
@@ -125,8 +126,7 @@ export function CreateSecretDialog({
             <Modal.CloseTrigger />
             <Modal.Header>
               <Modal.Heading>
-                Create a new secret under{" "}
-                <span className="font-mono text-yellow-700">{env_name}</span>
+                Create a new secret under <SimpleMono value={env_name} />
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body>

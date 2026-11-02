@@ -22,9 +22,9 @@ export function Alert({
   return (
     <HeroAlert status={status} className={className}>
       <HeroAlert.Indicator />
-      <HeroAlert.Content>
+      <HeroAlert.Content className="w-full">
         <HeroAlert.Title>{title}</HeroAlert.Title>
-        <HeroAlert.Description className="w-full overflow-x-auto">
+        <HeroAlert.Description className="max-w-full overflow-x-auto">
           {children}
         </HeroAlert.Description>
         <span className="sm:hidden">{action}</span>

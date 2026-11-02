@@ -1,6 +1,7 @@
 import { Description } from "@heroui/react";
 import { IconCode } from "@tabler/icons-react";
 import { Link } from "react-router";
+import TimeAgo from "react-timeago";
 import type { Environment } from "@/api-types/Environment";
 
 export function EnvironmentItem({
@@ -22,7 +23,7 @@ export function EnvironmentItem({
           <Description>{environment.description}</Description>
         )}
         <div className="text-xs text-muted text-right">
-          {environment.created_at}
+          <TimeAgo date={environment.created_at} />
         </div>
       </div>
     </Link>
