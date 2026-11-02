@@ -1,6 +1,8 @@
-import { Accordion, IconChevronDown } from "@heroui/react";
+import { Accordion, IconChevronDown, Separator } from "@heroui/react";
 import type { ReactNode } from "react";
-import { Alert, CommandDisplay } from "@/components";
+import { Alert } from "@/components";
+import { SimpleMono } from "@/components/command";
+import { APP_VERSION } from "@/constants";
 
 export function LocalOfflineInstructions() {
   return (
@@ -36,32 +38,39 @@ const RESOLVE_ITEMS: { key: string; title: ReactNode; content: ReactNode }[] = [
     key: "missing-cli",
     title: "Do you have spass cli installed",
     content: (
-      <p>
-        You can install the spass cli by running:
-        <br />
-        <CommandDisplay className="font-mono">
-          brew install spass
-        </CommandDisplay>
-      </p>
+      <div className="flex flex-col gap-2">
+        <div>You can install the spass cli by running</div>
+        <SimpleMono value="brew install secretpass/tap/secretpass-cli" />
+        <div className="flex">
+          <Separator className="flex-1" />
+          Or
+          <Separator className="flex-1" />
+        </div>
+        <SimpleMono
+          value={`curl --proto '=https' --tlsv1.2 -LsSf https://github.com/secretpass/cli/releases/download/${APP_VERSION}/secretpass-cli-installer.sh | sh`}
+        />
+      </div>
     ),
   },
   {
     key: "service-down",
     title: "Is Secretpass local service running",
     content: (
-      <p>
-        You can check if the service is active by running
-        <br />
-        <CommandDisplay className="font-mono">spass status</CommandDisplay>
-        <br />
-        You can start the service by running:
-        <br />
-        <CommandDisplay className="font-mono">spass start</CommandDisplay>
-        <br />
-        The service will be started in the background on port{" "}
-        <strong>20206</strong>, please ensure no other service is binding to the
-        port.
-      </p>
+      <ul className="list-disc pl-5">
+        <li>
+          You can check if the service is active by running{" "}
+          <SimpleMono value="spass status" />
+        </li>
+        <li>
+          You can start the service by running{" "}
+          <SimpleMono value="spass local start" />
+        </li>
+        <li>
+          The service will be started in the background on port{" "}
+          <SimpleMono value="20206" />, please ensure no other service is
+          binding to this port.
+        </li>
+      </ul>
     ),
   },
 ];
