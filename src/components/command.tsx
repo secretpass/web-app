@@ -1,5 +1,11 @@
+import {
+  IconCopy,
+  IconCopyCheckFilled,
+  IconCopyFilled,
+} from "@tabler/icons-react";
 import clsx from "clsx";
-import type { ReactNode } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { boolean } from "zod";
 
 export function CommandDisplay({
   children,
@@ -32,9 +38,37 @@ export function SimpleMono({
   value: string;
   className?: string;
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = useCallback(() => {
+    navigator.clipboard.writeText(value).then(() => setCopied(true));
+  }, [value]);
+
+  useEffect(() => {
+    if (!copied) {
+      return;
+    }
+
+    const timeout = setTimeout(() => setCopied(false), 1000);
+    return () => clearTimeout(timeout);
+  }, [copied]);
+
   return (
-    <span className={clsx("font-mono text-yellow-700", className)}>
+    <button
+      className={clsx(
+        "font-mono text-yellow-700 group relative text-left break-all",
+        className,
+      )}
+      onClick={copy}
+      type="button"
+    >
       {value}
-    </span>
+      {!copied && (
+        <IconCopyFilled className="absolute size-5 -top-0.5 -mr-2 right-0.5 cursor-pointer text-muted hover:text-foreground hidden group-hover:inline" />
+      )}
+      {copied && (
+        <IconCopyCheckFilled className="absolute size-5 -top-0.5 -mr-2 right-0.5 text-success" />
+      )}
+    </button>
   );
 }

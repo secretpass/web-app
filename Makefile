@@ -11,7 +11,7 @@ all: install build-local build-cloud
 dev-local:
 	@echo "==> Run local UI"
 	NODE_ENV=development \
-	VITE_API_BASE_URL=http://localhost:20206 \
+	VITE_API_BASE_URL=https://localhost:20206 \
 	VITE_OPERATION_MODE=Local \
 	bun dev --host secretpass-local.localhost --port 3001 --strictPort
 
@@ -30,7 +30,7 @@ install:
 build-local:
 	@echo "==> Build local UI"
 	NODE_ENV=production \
-	VITE_API_BASE_URL=http://localhost:20206 \
+	VITE_API_BASE_URL=https://localhost:20206 \
 	VITE_OPERATION_MODE=Local \
 	bun run build
 

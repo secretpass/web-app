@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Alert } from "@/components";
 import { SimpleMono } from "@/components/command";
 import { APP_VERSION } from "@/constants";
+import { isSafari } from "@/utils";
 
 export function LocalOfflineInstructions() {
   return (
@@ -41,13 +42,13 @@ const RESOLVE_ITEMS: { key: string; title: ReactNode; content: ReactNode }[] = [
       <div className="flex flex-col gap-2">
         <div>You can install the spass cli by running</div>
         <SimpleMono value="brew install secretpass/tap/secretpass-cli" />
-        <div className="flex">
+        <div className="flex items-center gap-4">
           <Separator className="flex-1" />
           Or
           <Separator className="flex-1" />
         </div>
         <SimpleMono
-          value={`curl --proto '=https' --tlsv1.2 -LsSf https://github.com/secretpass/cli/releases/download/${APP_VERSION}/secretpass-cli-installer.sh | sh`}
+          value={`curl -LsSf https://github.com/secretpass/cli/releases/download/${APP_VERSION}/secretpass-cli-installer.sh | sh`}
         />
       </div>
     ),
@@ -66,11 +67,26 @@ const RESOLVE_ITEMS: { key: string; title: ReactNode; content: ReactNode }[] = [
           <SimpleMono value="spass local start" />
         </li>
         <li>
-          The service will be started in the background on port{" "}
-          <SimpleMono value="20206" />, please ensure no other service is
-          binding to this port.
+          The service will be started in the background on{" "}
+          <SimpleMono value="https://localhost:20206" />, please ensure no other
+          service is binding to this port.
         </li>
       </ul>
     ),
   },
+  ...(isSafari()
+    ? [
+        {
+          key: "safari-user",
+          title: "Using Safari on MacOS?",
+          content: (
+            <>
+              Safari may block local TLS certificates used by secretpass cli.
+              You can fix this by running{" "}
+              <SimpleMono value="spass install-certificates" />
+            </>
+          ),
+        },
+      ]
+    : []),
 ];

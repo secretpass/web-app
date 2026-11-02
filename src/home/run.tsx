@@ -17,6 +17,7 @@ import {
 import { useProjectsListQuery } from "@/projects";
 import { useEnvironmentQuery } from "@/projects/environments/queries";
 import { useProjectQuery } from "@/projects/queries";
+import { isSafari } from "@/utils";
 
 interface EncryptionDetails {
   public_key: SimpleMachinePublicKey;
@@ -38,7 +39,7 @@ export function RunnerDialog() {
   const details_query = useQuery({
     queryKey: ["command-details"],
     queryFn: async (): Promise<EncryptionDetails> => {
-      const response = await fetch(`http://localhost:${port}/details`, {
+      const response = await fetch(`https://localhost:${port}/details`, {
         mode: "cors",
       });
       if (!response.ok) {
@@ -110,7 +111,7 @@ export function RunnerDialog() {
     const inject_op = await error.catch(
       "Error transmitting secrets to spass cli",
       async () => {
-        const response = await fetch(`http://localhost:${port}/commit`, {
+        const response = await fetch(`https://localhost:${port}/commit`, {
           method: "POST",
           mode: "cors",
           body: JSON.stringify(secrets_package),
@@ -325,10 +326,20 @@ export function RunnerDialog() {
                   className="bg-background shadow-none"
                 >
                   We faced an issue attempting to communicate with spass client
-                  over <SimpleMono value={`http://localhost:${port}/details`} />
-                  , this is a random endpoint for this command only please
-                  ensure the browser has sufficient permissions to communicate
-                  with <SimpleMono value="localhost" />.
+                  over{" "}
+                  <SimpleMono value={`https://localhost:${port}/details`} />,
+                  this is a random endpoint for this command only please ensure
+                  the browser has sufficient permissions to communicate with{" "}
+                  <SimpleMono value="localhost" />.
+                  {isSafari() && (
+                    <>
+                      <br />
+                      <br />
+                      For Safari user's, Safari may block local TLS certificates
+                      used by secretpass cli. You can fix this by running{" "}
+                      <SimpleMono value="spass install-certificates" />
+                    </>
+                  )}
                 </Alert>
               )}
               <ErrorDisplay value={error.value} />
