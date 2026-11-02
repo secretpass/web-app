@@ -1,11 +1,6 @@
-import {
-  IconCopy,
-  IconCopyCheckFilled,
-  IconCopyFilled,
-} from "@tabler/icons-react";
+import { IconCopyCheckFilled, IconCopyFilled } from "@tabler/icons-react";
 import clsx from "clsx";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
-import { boolean } from "zod";
 
 export function CommandDisplay({
   children,
