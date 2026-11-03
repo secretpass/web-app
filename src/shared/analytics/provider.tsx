@@ -1,9 +1,5 @@
-import {
-  AnalyticsExtensions,
-  ConversationsExtensions,
-} from "posthog-js/dist/extension-bundles";
+import { AnalyticsExtensions } from "posthog-js/dist/extension-bundles";
 import { PostHog } from "posthog-js/dist/module.slim.no-external";
-import "posthog-js/dist/conversations";
 import "posthog-js/dist/exception-autocapture";
 import {
   createContext,
@@ -33,7 +29,6 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
       persistence: "localStorage",
       disable_external_dependency_loading: true,
       __extensionClasses: {
-        ...ConversationsExtensions,
         ...AnalyticsExtensions,
       },
       loaded: () => {

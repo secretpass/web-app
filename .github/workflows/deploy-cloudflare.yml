@@ -55,6 +55,7 @@ jobs:
         run: make build-${{ matrix.target }}
         env:
           NODE_ENV: production
+          VITE_DOMAIN_PREFIX: ${{ matrix.target }}
           VITE_APP_VERSION: ${{ github.ref_name }}
 
       - name: Publish to Cloudflare pages
