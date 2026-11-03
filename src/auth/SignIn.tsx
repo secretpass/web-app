@@ -9,6 +9,7 @@ import {
 import { IconArrowRight, IconFingerprint, IconMail } from "@tabler/icons-react";
 import { useForm, useSelector } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
 import { type SubmitEventHandler, useCallback, useState } from "react";
 import * as z from "zod";
 import type { EmailLoginRequest } from "@/api-types/EmailLoginRequest";
@@ -198,7 +199,12 @@ export function SignInForm() {
 
       <ErrorDisplay value={error.value} />
 
-      <div className="flex">
+      <div
+        className={clsx(
+          "flex gap-4 flex-col-reverse md:flex-row items-center",
+          started ? "justify-end" : "justify-between",
+        )}
+      >
         {!started && (
           <Button
             size="lg"
@@ -212,8 +218,6 @@ export function SignInForm() {
             Sign in with Email
           </Button>
         )}
-
-        <div className="grow" />
 
         {!started && (
           <Button

@@ -46,7 +46,7 @@ export function Navbar() {
           )}
 
           {session.isSuccess && (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 md:gap-2">
               <ThemeToggle />
               <UserProfileButton user={session.data.user} />
             </div>

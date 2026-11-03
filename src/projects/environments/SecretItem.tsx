@@ -104,9 +104,22 @@ export function SecretItem({
         "bg-background-secondary px-6 py-4 rounded-xl flex flex-col",
       )}
     >
-      <div className="flex items-start gap-4">
-        <div className="w-1/2 md:w-1/3 xl:w-1/4 text-base text-left justify-start font-mono font-light">
+      <div className="flex items-start gap-4 flex-col md:flex-row">
+        <div className="w-full md:w-1/3 xl:w-1/4 text-base text-left font-mono font-light flex justify-between items-center">
           {definition.name}
+          <Button
+            isIconOnly
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              "inline md:hidden",
+              locked ? "hover:text-yellow-800" : "hover:text-success",
+            )}
+            onClick={locked ? unLock : reset}
+          >
+            {locked && <IconLock className="size-5" />}
+            {!locked && <IconLockOpen2 className="size-5" />}
+          </Button>
         </div>
         <div className={clsx("flex flex-col grow", locked ? "gap-1" : "gap-4")}>
           <InputGroup
@@ -174,6 +187,7 @@ export function SecretItem({
           variant="ghost"
           size="sm"
           className={clsx(
+            "hidden md:inline",
             locked ? "hover:text-yellow-800" : "hover:text-success",
           )}
           onClick={locked ? unLock : reset}

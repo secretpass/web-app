@@ -85,7 +85,7 @@ export function BreadCrumbPageHeader({
       )}
     >
       <div className="flex flex-col gap-4 flex-wrap">
-        <Breadcrumbs>
+        <Breadcrumbs className="flex-wrap">
           {items.map((item) => (
             <HeaderItemComponent key={item.to} {...item} />
           ))}

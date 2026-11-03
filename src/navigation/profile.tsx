@@ -36,7 +36,7 @@ export function UserProfileButton({ user }: { user: User }) {
       <Dropdown.Trigger>
         <div className="button button--md button--ghost h-auto">
           <IconUserCircle className="size-8" />
-          <div className="flex grow flex-col text-left">
+          <div className="hidden md:flex grow flex-col text-left">
             <Label>{user.name}</Label>
             <Description>{user.email}</Description>
           </div>
