@@ -26,7 +26,7 @@ export function PageHeader({
       )}
     >
       <div className="flex flex-col">
-        <h3 className="text-4xl pt-4">{title}</h3>
+        <h3 className="text-4xl pt-4 text-accent">{title}</h3>
         {description && <Description>{description}</Description>}
       </div>
       <div className="grow" />

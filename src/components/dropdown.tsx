@@ -39,7 +39,12 @@ export function DropdownItem({
       target="_blank"
       variant={variant}
     >
-      <Icon className={clsx("size-5", variant === "danger" && "text-danger")} />
+      <Icon
+        className={clsx(
+          "size-5",
+          variant === "danger" ? "text-danger" : "text-accent",
+        )}
+      />
       <span className="grow">{label}</span>
       {is_external && <IconExternalLink className="size-4" />}
     </Dropdown.Item>

@@ -29,7 +29,9 @@ export function PasskeysList() {
         <CreatePasskeyButton
           variant={environment_passkeys.length === 0 ? "primary" : "ghost"}
         >
-          <IconPlus />
+          <IconPlus
+            className={environment_passkeys.length === 0 ? "" : "text-accent"}
+          />
           Add a new passkey
         </CreatePasskeyButton>
       </SectionHeader>
@@ -98,7 +100,7 @@ function PasskeyItem({ passkey, user }: { passkey: Passkey; user: User }) {
       <IconLockAccess
         className={clsx(
           "size-6",
-          passkey.type === OPERATION_MODE ? "" : "text-muted",
+          passkey.type === OPERATION_MODE ? "text-accent" : "text-muted",
         )}
       />
       <div className="flex flex-col gap-2 grow">
@@ -113,7 +115,7 @@ function PasskeyItem({ passkey, user }: { passkey: Passkey; user: User }) {
           </div>
           {passkey.type === OPERATION_MODE && (
             <Button
-              className="hidden group-hover:flex h-auto"
+              className="hidden group-hover:flex h-auto mr-2"
               size="sm"
               variant="outline"
               onClick={onVerify}

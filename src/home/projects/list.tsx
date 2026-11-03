@@ -22,7 +22,9 @@ export function ProjectsList({
         {isCloud && (
           <Link to="/new">
             <Button variant={projects.length === 0 ? "primary" : "ghost"}>
-              <IconPlus />
+              <IconPlus
+                className={projects.length === 0 ? "" : "text-accent"}
+              />
               Create a new project
             </Button>
           </Link>
@@ -80,7 +82,7 @@ function ProjectCard({
       to={`/p/${project.id}`}
       className="bg-background hover:bg-background-secondary p-4 rounded-xl flex gap-4 items-start"
     >
-      <IconShieldHalfFilled className="size-6" />
+      <IconShieldHalfFilled className="size-6 text-accent" />
       <div className="flex flex-col gap-2 grow">
         <div className="font-semibold">{project.name}</div>
         {project.description && (

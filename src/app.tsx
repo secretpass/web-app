@@ -9,7 +9,7 @@ import { ProjectHome } from "./projects/home/ProjectHome";
 
 export function App() {
   return (
-    <main className="min-h-screen min-w-screen bg-background">
+    <main className="min-h-screen min-w-screen bg-background px-1">
       <Toast.Provider />
       <Navbar />
 
