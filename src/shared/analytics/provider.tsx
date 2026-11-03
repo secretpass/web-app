@@ -24,10 +24,10 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const posthog = new PostHog();
-    posthog.init(import.meta.env.VITE_POSTHOG_PROJECT_TOKEN, {
+    posthog.init("phc_yyfZKMnF44Gu7oHNc5H8E6KDL6fNHD5cGmE2GbBUnLca", {
       autocapture: true,
-      ui_host: import.meta.env.VITE_POSTHOG_UI_HOST,
-      api_host: import.meta.env.VITE_POSTHOG_API_HOST,
+      ui_host: "https://eu.i.posthog.com",
+      api_host: "https://b.secretpass.cloud",
       defaults: "2026-06-25",
       person_profiles: "identified_only",
       persistence: "localStorage",
