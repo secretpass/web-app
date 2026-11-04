@@ -180,4 +180,5 @@ body {
 .sticky-below-nav {
   top: 4em;
   position: sticky;
+  @apply bg-background backdrop-blur supports-backdrop-filter:bg-background/60;
 }
