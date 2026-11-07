@@ -7,6 +7,7 @@ import { isLocal } from "@/constants";
 import { useProjectsListQuery } from "@/projects";
 import { HelpTopicList } from "./help";
 import { PasskeysList } from "./PasskeysList";
+import { InaccessibleProjectsList } from "./projects/inaccessible";
 import { ProjectsList } from "./projects/list";
 import { PendingProjectsList } from "./projects/pending";
 import { RunnerDialog } from "./run";
@@ -16,7 +17,7 @@ export function HomeDashboard() {
 
   return (
     <div className="content mx-auto container">
-      <PageHeader title="Home">
+      <PageHeader title="Home" className="sticky-below-nav">
         <Button
           isIconOnly
           isDisabled={projects_list.isFetching}
@@ -55,6 +56,20 @@ export function HomeDashboard() {
       <Shimmer className="h-32" active={projects_list.isPending}>
         <PasskeysList />
       </Shimmer>
+
+      {isLocal && (
+        <Shimmer
+          className="h-32"
+          active={projects_list.isPending}
+          hidden={!projects_list.data?.inaccessible.length}
+        >
+          {projects_list.isSuccess && (
+            <InaccessibleProjectsList
+              projects={projects_list.data.inaccessible}
+            />
+          )}
+        </Shimmer>
+      )}
 
       {!projects_list.isPending && isLocal && (
         <div className="my-8">
