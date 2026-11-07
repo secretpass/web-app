@@ -1,11 +1,13 @@
-import { Button, InputGroup, toast } from "@heroui/react";
+import { Button, InputGroup, Separator, toast } from "@heroui/react";
 import {
   IconAlignLeft,
   IconCircleCheck,
+  IconCopyFilled,
   IconFingerprint,
   IconKeyFilled,
   IconLock,
   IconLockOpen2,
+  IconTag,
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -46,7 +48,7 @@ export function SecretItem({
     definition.env_name,
   );
   const error = useError();
-  const [_tag_values, setTagValues] = useState<DecryptedSecret[] | undefined>(
+  const [tag_values, setTagValues] = useState<DecryptedSecret[] | undefined>(
     undefined,
   );
   const [latest_value, setLatestValue] = useState<string | undefined>(
@@ -271,6 +273,7 @@ export function SecretItem({
           <InputGroup
             isDisabled={locked}
             variant={locked ? "secondary" : "primary"}
+            className="group"
           >
             <InputGroup.Prefix>
               <IconKeyFilled className="text-muted size-5" />
@@ -282,7 +285,7 @@ export function SecretItem({
               onChange={(evt) => setUpdatedValue(evt.currentTarget.value)}
               className="field-sizing-content resize-none max-h-16 font-mono"
             />
-            <InputGroup.Suffix>
+            <InputGroup.Suffix className="flex items-center gap-2">
               <Button
                 isDisabled={error.is_pending}
                 className={clsx(
@@ -296,6 +299,19 @@ export function SecretItem({
               >
                 <IconFingerprint /> Update
               </Button>
+
+              <IconCopyFilled
+                className="size-5 text-muted hover:text-accent cursor-pointer hidden group-hover:inline"
+                onClick={() =>
+                  navigator.clipboard
+                    .writeText(updated_value ?? latest_value ?? "")
+                    .then(() =>
+                      toast(`${definition.name} copied!`, {
+                        variant: "success",
+                      }),
+                    )
+                }
+              />
             </InputGroup.Suffix>
           </InputGroup>
 
@@ -332,6 +348,34 @@ export function SecretItem({
               </Button>
             </InputGroup.Suffix>
           </InputGroup>
+
+          {(tag_values?.length ?? 0) > 0 && <Separator variant="secondary" />}
+          {tag_values?.map((value) => (
+            <InputGroup key={value.tag} className="group">
+              <InputGroup.Prefix>
+                <IconTag className="text-muted size-4" />
+              </InputGroup.Prefix>
+              <InputGroup.TextArea
+                readOnly
+                value={value.plain_value}
+                className="field-sizing-content resize-none max-h-16 text-sm font-mono text-muted"
+              />
+              <InputGroup.Suffix className="flex items-center gap-2">
+                {value.tag}
+
+                <IconCopyFilled
+                  className="size-5 text-muted hover:text-accent cursor-pointer hidden group-hover:inline"
+                  onClick={() =>
+                    navigator.clipboard.writeText(value.plain_value).then(() =>
+                      toast(`${value.name}@${value.tag} copied!`, {
+                        variant: "success",
+                      }),
+                    )
+                  }
+                />
+              </InputGroup.Suffix>
+            </InputGroup>
+          ))}
         </div>
         <Button
           isIconOnly
