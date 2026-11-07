@@ -65,7 +65,14 @@ export function EnvironmentDashboard() {
       {!!query.data?.secrets.length && (
         <div className="flex flex-col gap-y-6">
           {query.data.secrets.map((item) => (
-            <SecretItem key={item.definition.name} {...item} />
+            <SecretItem
+              key={item.definition.name}
+              {...item}
+              machines_keys={query.data.machines_keys as MachinePublicKey[]}
+              contributors_keys={
+                query.data.contributors_keys as ContributorPublicKey[]
+              }
+            />
           ))}
         </div>
       )}

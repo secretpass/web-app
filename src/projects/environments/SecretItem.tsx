@@ -1,4 +1,4 @@
-import { Button, InputGroup } from "@heroui/react";
+import { Button, InputGroup, toast } from "@heroui/react";
 import {
   IconAlignLeft,
   IconCircleCheck,
@@ -9,21 +9,42 @@ import {
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useCallback, useMemo, useRef, useState } from "react";
+import type { PasskeyAuthorizationResult } from "@/api-types/PasskeyAuthorizationResult";
 import type { SecretWithEncryptedValues } from "@/api-types/SecretWithEncryptedValues";
-import { useDecryptionParams } from "@/auth/useAuthorization";
+import type { UpdateSecretRequest } from "@/api-types/UpdateSecretRequest";
+import type { UpdateSecretValueRequest } from "@/api-types/UpdateSecretValueRequest";
+import {
+  useAuthorizationParams,
+  useDecryptionParams,
+} from "@/auth/useAuthorization";
 import { useError } from "@/components";
 import {
   type ContributorPublicKey,
   type ContributorSecretValue,
   type DecryptedSecret,
   decrypt_secrets,
+  encrypt_secret,
+  type MachinePublicKey,
 } from "@/core";
 import { useVisibleAction } from "@/hooks";
+import { resolveApiRequest } from "@/utils";
+import { useEnvironmentQuery } from "./queries";
+
+interface SecretItemProps extends SecretWithEncryptedValues {
+  machines_keys: MachinePublicKey[];
+  contributors_keys: ContributorPublicKey[];
+}
 
 export function SecretItem({
   definition,
   contributor_values,
-}: SecretWithEncryptedValues) {
+  machines_keys,
+  contributors_keys,
+}: SecretItemProps) {
+  const environment_query = useEnvironmentQuery(
+    definition.project_id,
+    definition.env_name,
+  );
   const error = useError();
   const [_tag_values, setTagValues] = useState<DecryptedSecret[] | undefined>(
     undefined,
@@ -42,10 +63,13 @@ export function SecretItem({
     () => typeof latest_value === "undefined",
     [latest_value],
   );
-  const get_params = useDecryptionParams(error);
+  const get_decryption_params = useDecryptionParams(error);
+  const get_authorization_params = useAuthorizationParams(error);
 
   const unLock = useCallback(async () => {
-    const params_op = await get_params("secret decryption", { toast: true });
+    const params_op = await get_decryption_params("secret decryption", {
+      toast: true,
+    });
     if (!params_op.ok) {
       return;
     }
@@ -74,7 +98,7 @@ export function SecretItem({
         ?.plain_value ?? "",
     );
     setTagValues(decrypted_secrets.filter((secret) => secret.tag !== "latest"));
-  }, [get_params, error.catch, contributor_values]);
+  }, [get_decryption_params, error.catch, contributor_values]);
 
   const reset = useCallback(() => {
     setTagValues(undefined);
@@ -92,6 +116,128 @@ export function SecretItem({
     },
     [reset],
   );
+
+  const updateSecret = useCallback(async () => {
+    if (typeof updated_comments === "undefined") {
+      return;
+    }
+
+    const update_op = await error.catch(
+      "Error updating secret",
+      () =>
+        resolveApiRequest(
+          `/api/projects/${definition.project_id}/env/${definition.env_name}/secrets/${definition.name}`,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              comments: updated_comments,
+            } satisfies UpdateSecretRequest),
+          },
+        ),
+      { toast: true },
+    );
+
+    if (!update_op.ok) {
+      return;
+    }
+
+    const refresh_op = await error.catch(
+      "Error updating secrets",
+      () => environment_query.refetch(),
+      { toast: true },
+    );
+    if (!refresh_op.ok) {
+      return;
+    }
+
+    setUpdatedComments(undefined);
+    toast("Update successful!", { variant: "success" });
+  }, [
+    definition.env_name,
+    definition.name,
+    definition.project_id,
+    environment_query.refetch,
+    error.catch,
+    updated_comments,
+  ]);
+
+  const updateSecretValue = useCallback(async () => {
+    if (typeof updated_value === "undefined") {
+      return;
+    }
+    const challenge_op = await get_authorization_params(
+      "updating secret value",
+      { toast: true },
+    );
+    if (!challenge_op.ok) {
+      return;
+    }
+
+    const encryption_op = await error.catch(
+      "Error encrypting secret",
+      () =>
+        encrypt_secret({
+          auth_request: challenge_op.result,
+          contributors_keys,
+          machines_keys,
+          env_name: definition.env_name,
+          name: definition.name,
+          secret_value: updated_value,
+          tag_name: "latest",
+        }),
+      { toast: true },
+    );
+
+    if (!encryption_op.ok) {
+      return;
+    }
+
+    const update_op = await error.catch(
+      "Error updating secret",
+      () =>
+        resolveApiRequest(
+          `/api/projects/${definition.project_id}/env/${definition.env_name}/secrets/${definition.name}/value`,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              auth_result: encryption_op.result
+                .auth_response as PasskeyAuthorizationResult,
+              contributors_values: encryption_op.result.contributors_values,
+              machines_values: encryption_op.result.machines_values,
+            } satisfies UpdateSecretValueRequest),
+          },
+        ),
+      { toast: true },
+    );
+
+    if (!update_op.ok) {
+      return;
+    }
+
+    const refresh_op = await error.catch(
+      "Error updating secrets",
+      () => environment_query.refetch(),
+      { toast: true },
+    );
+    if (!refresh_op.ok) {
+      return;
+    }
+
+    setLatestValue(updated_value);
+    setUpdatedValue(undefined);
+
+    toast("Update successful!", { variant: "success" });
+  }, [
+    error.catch,
+    get_authorization_params,
+    contributors_keys,
+    definition.env_name,
+    definition.name,
+    definition.project_id,
+    environment_query.refetch,
+    machines_keys,
+    updated_value,
+  ]);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -130,7 +276,7 @@ export function SecretItem({
               <IconKeyFilled className="text-muted size-5" />
             </InputGroup.Prefix>
             <InputGroup.TextArea
-              disabled={locked}
+              disabled={locked || error.is_pending}
               placeholder={locked ? "--ENCRYPTED-SECRET--" : "SECRET VALUE..."}
               value={updated_value ?? latest_value ?? ""}
               onChange={(evt) => setUpdatedValue(evt.currentTarget.value)}
@@ -138,6 +284,7 @@ export function SecretItem({
             />
             <InputGroup.Suffix>
               <Button
+                isDisabled={error.is_pending}
                 className={clsx(
                   "h-auto",
                   typeof updated_value === "undefined" && "hidden",
@@ -145,6 +292,7 @@ export function SecretItem({
                 )}
                 size="sm"
                 variant="secondary"
+                onClick={updateSecretValue}
               >
                 <IconFingerprint /> Update
               </Button>
@@ -162,6 +310,7 @@ export function SecretItem({
               <IconAlignLeft className="text-muted size-5" />
             </InputGroup.Prefix>
             <InputGroup.TextArea
+              disabled={error.is_pending}
               className="field-sizing-content resize-none max-h-16"
               placeholder="Comments..."
               value={updated_comments ?? definition.comments}
@@ -169,6 +318,7 @@ export function SecretItem({
             />
             <InputGroup.Suffix>
               <Button
+                isDisabled={error.is_pending}
                 className={clsx(
                   "h-auto",
                   typeof updated_comments === "undefined" && "hidden",
@@ -176,6 +326,7 @@ export function SecretItem({
                 )}
                 size="sm"
                 variant="secondary"
+                onClick={updateSecret}
               >
                 <IconCircleCheck /> Update
               </Button>
